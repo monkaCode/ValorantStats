@@ -6,13 +6,15 @@ from keep_alive import keep_alive
 
 # The ID and range of a sample spreadsheet.
 gc = gspread.service_account(filename=r"credentials.json")
-sh = gc.open_by_key("")
+sh = gc.open_by_key("") # key of the Google Sheet
 
-players = sh.get_worksheet(0).get("C3:C12")
-playerfast = []
-agents = ["PX", "JT", "SA", "SV", "BR", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"]
-developerID = 0
-assistantID = 0
+players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
+
+# general information
+playerfast = [] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
+agents = ["PX", "JT", "SA", "SV", "BR", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
+developerID = 0 # discrod ID of the developer
+assistantID = 0 # discord ID of the person who can also add games
 
 # set a bot prefix
 client = commands.Bot(command_prefix='?', help_command=None)
@@ -22,12 +24,13 @@ tokenTxt = open(r"token.txt", "r")
 if tokenTxt.mode == "r":
     token = tokenTxt.read()
 
-# bot is ready
+# bot is online
 @client.event
 async def on_ready():
     await client.change_presence(status=discord.Status.online, activity=discord.Game("VALORANT"))
     print('We have logged in as {0.user}'.format(client))
 
+# output if an error occured
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -37,51 +40,53 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.BadArgument):
         await ctx.send("Give me a valid argument.")
     else:
-        await ctx.send("Something went wrong, <@" + str(developerID) + ">.")
+        await ctx.send("Something went wrong, <@" + str(developerID) + ">.") # mentioned the developer in discord if something go wrong
         print(error)
 
+# command for all map specific information
 @client.command()
 async def map(ctx, arg1=None):
 
+    # setting some basic variables
     worksheet = sh.get_worksheet(2)
     worksheetstats = sh.get_worksheet(3)
-    bindGamesList = worksheet.col_values(2)
+    bindGamesList = worksheet.col_values(2) # default information for map Bind
     bindGames = 0
     bindWins = 0
     bindLosses = 0
     bindDraws = 0
-    havenGamesList = worksheet.col_values(3)
+    havenGamesList = worksheet.col_values(3) # default information for map Haven
     havenGames = 0
     havenWins = 0
     havenLosses = 0
     havenDraws = 0
-    splitGamesList = worksheet.col_values(4)
+    splitGamesList = worksheet.col_values(4) # default information for map Split
     splitGames = 0
     splitWins = 0
     splitLosses = 0
     splitDraws = 0
-    ascentGamesList = worksheet.col_values(5)
+    ascentGamesList = worksheet.col_values(5) # default information for map Ascent
     ascentGames = 0
     ascentWins = 0
     ascentLosses = 0
     ascentDraws = 0
-    iceboxGamesList = worksheet.col_values(6)
+    iceboxGamesList = worksheet.col_values(6) # default information for map Icebox
     iceboxGames = 0
     iceboxWins = 0
     iceboxLosses = 0
     iceboxDraws = 0
-    breezeGamesList = worksheet.col_values(7)
+    breezeGamesList = worksheet.col_values(7) # default information for map Breeze
     breezeGames = 0
     breezeWins = 0
     breezeLosses = 0
     breezeDraws = 0
 
-    if arg1 == None:
+    if arg1 == None: # when to user want to see the basic informations of all maps
         x = 1
         while x < len(bindGamesList):
-            if bindGamesList[x] != "":
+            if bindGamesList[x] != "": # checking each game if it has a result in the Bind column
                 bindGames += 1
-                if int(bindGamesList[x]) > 0:
+                if int(bindGamesList[x]) > 0: # bindGamesList[x] is the difference between round wins and losses
                     bindWins += 1
                 elif int(bindGamesList[x]) < 0:
                     bindLosses += 1
@@ -90,9 +95,9 @@ async def map(ctx, arg1=None):
             x += 1
         x = 1
         while x < len(havenGamesList):
-            if havenGamesList[x] != "":
+            if havenGamesList[x] != "": # checking each game if it has a result in the Haven column
                 havenGames += 1
-                if int(havenGamesList[x]) > 0:
+                if int(havenGamesList[x]) > 0: # havenGamesList[x] is the difference between round wins and losses
                     havenWins += 1
                 elif int(havenGamesList[x]) < 0:
                     havenLosses += 1
@@ -101,9 +106,9 @@ async def map(ctx, arg1=None):
             x += 1
         x = 1
         while x < len(splitGamesList):
-            if splitGamesList[x] != "":
+            if splitGamesList[x] != "": # checking each game if it has a result in the Split column
                 splitGames += 1
-                if int(splitGamesList[x]) > 0:
+                if int(splitGamesList[x]) > 0: # splitGamesList[x] is the difference between round wins and losses
                     splitWins += 1
                 elif int(splitGamesList[x]) < 0:
                     splitLosses += 1
@@ -112,9 +117,9 @@ async def map(ctx, arg1=None):
             x += 1
         x = 1
         while x < len(ascentGamesList):
-            if ascentGamesList[x] != "":
+            if ascentGamesList[x] != "": # checking each game if it has a result in the Ascent column
                 ascentGames += 1
-                if int(ascentGamesList[x]) > 0:
+                if int(ascentGamesList[x]) > 0: # ascentGamesList[x] is the difference between round wins and losses
                     ascentWins += 1
                 elif int(ascentGamesList[x]) < 0:
                     ascentLosses += 1
@@ -123,9 +128,9 @@ async def map(ctx, arg1=None):
             x += 1
         x = 1
         while x < len(iceboxGamesList):
-            if iceboxGamesList[x] != "":
+            if iceboxGamesList[x] != "": # checking each game if it has a result in the Icebox column
                 iceboxGames += 1
-                if int(iceboxGamesList[x]) > 0:
+                if int(iceboxGamesList[x]) > 0: # iceboxGamesList[x] is the difference between round wins and losses
                     iceboxWins += 1
                 elif int(iceboxGamesList[x]) < 0:
                     iceboxLosses += 1
@@ -134,15 +139,17 @@ async def map(ctx, arg1=None):
             x += 1
         x = 1
         while x < len(breezeGamesList):
-            if breezeGamesList[x] != "":
+            if breezeGamesList[x] != "": # checking each game if it has a result in the Breeze column
                 breezeGames += 1
-                if int(breezeGamesList[x]) > 0:
+                if int(breezeGamesList[x]) > 0: # breezeGamesList[x] is the difference between round wins and losses
                     breezeWins += 1
                 elif int(breezeGamesList[x]) < 0:
                     breezeLosses += 1
                 else:
                     breezeDraws += 1
             x += 1
+
+        # calculating the winrate of all maps
         try:
             bindWinrate = '%.1f' % (round((bindWins/bindGames), 3)*100)
         except:
@@ -167,6 +174,8 @@ async def map(ctx, arg1=None):
             breezeWinrate = '%.1f' % (round((breezeWins/breezeGames), 3)*100)
         except:
             breezeWinrate = 0
+        
+        # calculating the overall statistics
         try:
             totalWins = bindWins + havenWins + splitWins + ascentWins + iceboxWins + breezeWins
             totalLosses = bindLosses + havenLosses + splitLosses + ascentLosses + iceboxLosses + breezeLosses
@@ -179,14 +188,16 @@ async def map(ctx, arg1=None):
             totalDraws = 0
             totalGames = 0
             totalWinrate = 0
-        await ctx.send("Win%: **" + str(totalWinrate) + "%**   |   Wins: **" + str(totalWins) + "**   |   Losses: **" + str(totalLosses) + "**   |   Draws: **" + str(totalDraws) + "**   |   Games: **" + str(totalGames) + "**\n\n:flag_ma: **BIND**         Win%: **" + str(bindWinrate) + "%**   |   Wins: **" + str(bindWins) + "**   |   Losses: **" + str(bindLosses) + "**   |   Draws: **" + str(bindDraws) + "**   |   Games: **" + str(bindGames) + "**\n:flag_bt: **HAVEN**    Win%: **" + str(havenWinrate) + "%**   |   Wins: **" + str(havenWins) + "**   |   Losses: **" + str(havenLosses) + "**   |   Draws: **" + str(havenDraws) + "**   |   Games: **" + str(havenGames) + "**\n:flag_jp: **SPLIT**        Win%: **" + str(splitWinrate) + "%**   |   Wins: **" + str(splitWins) + "**   |   Losses: **" + str(splitLosses) + "**   |   Draws: **" + str(splitDraws) + "**   |   Games: **" + str(splitGames) + "**\n:flag_it: **ASCENT**   Win%: **" + str(ascentWinrate) + "%**   |   Wins: **" + str(ascentWins) + "**   |   Losses: **" + str(ascentLosses) + "**   |   Draws: **" + str(ascentDraws) + "**   |   Games: **" + str(ascentGames) + "**\n:flag_ru: **ICEBOX**    Win%: **" + str(iceboxWinrate) + "%**   |   Wins: **" + str(iceboxWins) + "**   |   Losses: **" + str(iceboxLosses) + "**   |   Draws: **" + str(iceboxDraws) + "**   |   Games: **" + str(iceboxGames) + "**\n:flag_pr: **BREEZE**    Win%: **" + str(breezeWinrate) + "%**   |   Wins: **" + str(breezeWins) + "**   |   Losses: **" + str(breezeLosses) + "**   |   Draws: **" + str(breezeDraws) + "**   |   Games: **" + str(breezeGames) + "**")
 
-    elif arg1.lower() == "bind":
+        # sending the final message in discord
+        await ctx.send("Win%: **" + str(totalWinrate) + "%**   |   Wins: **" + str(totalWins) + "**   |   Losses: **" + str(totalLosses) + "**   |   Draws: **" + str(totalDraws) + "**   |   Games: **" + str(totalGames) + "**\n\n:flag_ma: **BIND**         Win%: **" + str(bindWinrate) + "%**   |   Wins: **" + str(bindWins) + "**   |   Losses: **" + str(bindLosses) + "**   |   Draws: **" + str(bindDraws) + "**   |   Games: **" + str(bindGames) + "**\n:flag_bt: **HAVEN**    Win%: **" + str(havenWinrate) + "%**   |   Wins: **" + str(havenWins) + "**   |   Losses: **" + str(havenLosses) + "**   |   Draws: **" + str(havenDraws) + "**   |   Games: **" + str(havenGames) + "**\n:flag_jp: **SPLIT**        Win%: **" + str(splitWinrate) + "%**   |   Wins: **" + str(splitWins) + "**   |   Losses: **" + str(splitLosses) + "**   |   Draws: **" + str(splitDraws) + "**   |   Games: **" + str(splitGames) + "**\n:flag_it: **ASCENT**   Win%: **" + str(ascentWinrate) + "%**   |   Wins: **" + str(ascentWins) + "**   |   Losses: **" + str(ascentLosses) + "**   |   Draws: **" + str(ascentDraws) + "**   |   Games: **" + str(ascentGames) + "**\n:flag_ru: **ICEBOX**    Win%: **" + str(iceboxWinrate) + "%**   |   Wins: **" + str(iceboxWins) + "**   |   Losses: **" + str(iceboxLosses) + "**   |   Draws: **" + str(iceboxDraws) + "**   |   Games: **" + str(iceboxGames) + "**\n:flag_tt: **BREEZE**    Win%: **" + str(breezeWinrate) + "%**   |   Wins: **" + str(breezeWins) + "**   |   Losses: **" + str(breezeLosses) + "**   |   Draws: **" + str(breezeDraws) + "**   |   Games: **" + str(breezeGames) + "**")
+
+    elif arg1.lower() == "bind": # only information of the map Bind
         x = 1
         while x < len(bindGamesList):
-            if bindGamesList[x] != "":
+            if bindGamesList[x] != "": # checking each game if it has a result in the Bind column
                 bindGames += 1
-                if int(bindGamesList[x]) > 0:
+                if int(bindGamesList[x]) > 0: # bindGamesList[x] is the difference between round wins and losses
                     bindWins += 1
                 elif int(bindGamesList[x]) < 0:
                     bindLosses += 1
@@ -194,26 +205,27 @@ async def map(ctx, arg1=None):
                     bindDraws += 1
             x += 1
         try:
-            bindWinrate = '%.1f' % (round((bindWins/bindGames), 3)*100)
+            bindWinrate = '%.1f' % (round((bindWins/bindGames), 3)*100) # calculating the winrate of the map Bind
         except:
             bindWinrate = 0
-        p = worksheetstats.get("Y2:AC11")
+        p = worksheetstats.get("Y2:AC11") # parse the player statistics
         playerstats = ""
 
-        for x in range(10):
+        for x in range(10): # get the information of each player
             try:
-                playerstats += "**" + players[x][0] + ":**   KDA: **" + p[x][0] + "** / **" + p[x][1] + "** / **" + p[x][2] + "**   |   K/D: **" + p[x][3] + "**   |   Win%: **" + p[x][4] + "**\n"
+                playerstats += "**" + players[x][0] + ":**   KDA: **" + p[x][0] + "** / **" + p[x][1] + "** / **" + p[x][2] + "**   |   K/D: **" + p[x][3] + "**   |   Win%: **" + p[x][4] + "**\n" # create a string to store all the player statistics
             except:
                 pass
 
+        # sending the final message in discord
         await ctx.send(":flag_ma: **__BIND__\nWin%:** " + str(bindWinrate) + "% (**W: **" + str(bindWins) + " | **L: **" + str(bindLosses) + " | **D: **" + str(bindDraws) + " | **[**" + str(bindGames) + "**]**)\n\n" + playerstats) 
     
-    elif arg1.lower() == "haven":
+    elif arg1.lower() == "haven": # only information of the map Haven
         x = 1
         while x < len(havenGamesList):
-            if havenGamesList[x] != "":
+            if havenGamesList[x] != "": # checking each game if it has a result in the Haven column
                 havenGames += 1
-                if int(havenGamesList[x]) > 0:
+                if int(havenGamesList[x]) > 0: # havenGamesList[x] is the difference between round wins and losses
                     havenWins += 1
                 elif int(havenGamesList[x]) < 0:
                     havenLosses += 1
@@ -221,26 +233,27 @@ async def map(ctx, arg1=None):
                     havenDraws += 1
             x += 1
         try:
-            havenWinrate = '%.1f' % (round((havenWins/havenGames), 3)*100)
+            havenWinrate = '%.1f' % (round((havenWins/havenGames), 3)*100) # calculating the winrate of the map Haven
         except:
             havenWinrate = 0
-        p = worksheetstats.get("Y14:AC23")
+        p = worksheetstats.get("Y14:AC23") # parse the player statistics
         playerstats = ""
 
-        for x in range(10):
+        for x in range(10): # get the information of each player
             try:
                 playerstats += "**" + players[x][0] + ":**   KDA: **" + p[x][0] + "** / **" + p[x][1] + "** / **" + p[x][2] + "**   |   K/D: **" + p[x][3] + "**   |   Win%: **" + p[x][4] + "**\n"
             except:
                 pass
 
+        # sending the final message in discord
         await ctx.send(":flag_bt: **__Haven__\nWin%:** " + str(havenWinrate) + "% (**W: **" + str(havenWins) + " | **L: **" + str(havenLosses) + " | **D: **" + str(havenDraws) + " | **[**" + str(havenGames) + "**]**)\n\n" + playerstats)
 
-    elif arg1.lower() == "split":
+    elif arg1.lower() == "split": # only information of the map Split
         x = 1
         while x < len(splitGamesList):
-            if splitGamesList[x] != "":
+            if splitGamesList[x] != "": # checking each game if it has a result in the Split column
                 splitGames += 1
-                if int(splitGamesList[x]) > 0:
+                if int(splitGamesList[x]) > 0: # splitGamesList[x] is the difference between round wins and losses
                     splitWins += 1
                 elif int(splitGamesList[x]) < 0:
                     splitLosses += 1
@@ -248,26 +261,27 @@ async def map(ctx, arg1=None):
                     splitDraws += 1
             x += 1
         try:
-            splitWinrate = '%.1f' % (round((splitWins/splitGames), 3)*100)
+            splitWinrate = '%.1f' % (round((splitWins/splitGames), 3)*100) # calculating the winrate of the map Split
         except:
             splitWinrate = 0
-        p = worksheetstats.get("Y26:AC35")
+        p = worksheetstats.get("Y26:AC35") # parse the player statistics
         playerstats = ""
 
-        for x in range(10):
+        for x in range(10): # get the information of each player
             try:
                 playerstats += "**" + players[x][0] + ":**   KDA: **" + p[x][0] + "** / **" + p[x][1] + "** / **" + p[x][2] + "**   |   K/D: **" + p[x][3] + "**   |   Win%: **" + p[x][4] + "**\n"
             except:
                 pass
 
+        # sending the final message in discord
         await ctx.send(":flag_jp: **__Split__\nWin%:** " + str(splitWinrate) + "% (**W: **" + str(splitWins) + " | **L: **" + str(splitLosses) + " | **D: **" + str(splitDraws) + " | **[**" + str(splitGames) + "**]**)\n\n" + playerstats)
 
-    elif arg1.lower() == "ascent":
+    elif arg1.lower() == "ascent": # only information of the map Ascent
         x = 1
         while x < len(ascentGamesList):
-            if ascentGamesList[x] != "":
+            if ascentGamesList[x] != "": # checking each game if it has a result in the Ascent column
                 ascentGames += 1
-                if int(ascentGamesList[x]) > 0:
+                if int(ascentGamesList[x]) > 0: # ascentGamesList[x] is the difference between round wins and losses
                     ascentWins += 1
                 elif int(ascentGamesList[x]) < 0:
                     ascentLosses += 1
@@ -275,26 +289,27 @@ async def map(ctx, arg1=None):
                     ascentDraws += 1
             x += 1
         try:
-            ascentWinrate = '%.1f' % (round((ascentWins/ascentGames), 3)*100)
+            ascentWinrate = '%.1f' % (round((ascentWins/ascentGames), 3)*100) # calculating the winrate of the map Ascent
         except:
             ascentWinrate = 0
-        p = worksheetstats.get("Y38:AC47")
+        p = worksheetstats.get("Y38:AC47") # parse the player statistics
         playerstats = ""
 
-        for x in range(10):
+        for x in range(10): # get the information of each player
             try:
                 playerstats += "**" + players[x][0] + ":**   KDA: **" + p[x][0] + "** / **" + p[x][1] + "** / **" + p[x][2] + "**   |   K/D: **" + p[x][3] + "**   |   Win%: **" + p[x][4] + "**\n"
             except:
                 pass
 
+        # sending the final message in discord
         await ctx.send(":flag_it: **__Ascent__\nWin%:** " + str(ascentWinrate) + "% (**W: **" + str(ascentWins) + " | **L: **" + str(ascentLosses) + " | **D: **" + str(ascentDraws) + " | **[**" + str(ascentGames) + "**]**)\n\n" + playerstats)
 
-    elif arg1.lower() == "icebox":
+    elif arg1.lower() == "icebox": # only information of the map Icebox
         x = 1
         while x < len(iceboxGamesList):
-            if iceboxGamesList[x] != "":
+            if iceboxGamesList[x] != "": # checking each game if it has a result in the Icebox column
                 iceboxGames += 1
-                if int(iceboxGamesList[x]) > 0:
+                if int(iceboxGamesList[x]) > 0: # iceboxGamesList[x] is the difference between round wins and losses
                     iceboxWins += 1
                 elif int(iceboxGamesList[x]) < 0:
                     iceboxLosses += 1
@@ -302,26 +317,27 @@ async def map(ctx, arg1=None):
                     iceboxDraws += 1
             x += 1
         try:
-            iceboxWinrate = '%.1f' % (round((iceboxWins/iceboxGames), 3)*100)
+            iceboxWinrate = '%.1f' % (round((iceboxWins/iceboxGames), 3)*100) # calculating the winrate of the map Icebox
         except:
             iceboxWinrate = 0
-        p = worksheetstats.get("Y50:AC59")
+        p = worksheetstats.get("Y50:AC59") # parse the player statistics
         playerstats = ""
 
-        for x in range(10):
+        for x in range(10): # get the information of each player
             try:
                 playerstats += "**" + players[x][0] + ":**   KDA: **" + p[x][0] + "** / **" + p[x][1] + "** / **" + p[x][2] + "**   |   K/D: **" + p[x][3] + "**   |   Win%: **" + p[x][4] + "**\n"
             except:
                 pass
 
+        # sending the final message in discord
         await ctx.send(":flag_ru: **__Icebox__\nWin%:** " + str(iceboxWinrate) + "% (**W: **" + str(iceboxWins) + " | **L: **" + str(iceboxLosses) + " | **D: **" + str(iceboxDraws) + " | **[**" + str(iceboxGames) + "**]**)\n\n" + playerstats)
 
-    elif arg1.lower() == "breeze":
+    elif arg1.lower() == "breeze": # only information of the map Breeze
         x = 1
         while x < len(breezeGamesList):
-            if breezeGamesList[x] != "":
+            if breezeGamesList[x] != "": # checking each game if it has a result in the Breeze column
                 breezeGames += 1
-                if int(breezeGamesList[x]) > 0:
+                if int(breezeGamesList[x]) > 0: # breezeGamesList[x] is the difference between round wins and losses
                     breezeWins += 1
                 elif int(breezeGamesList[x]) < 0:
                     breezeLosses += 1
@@ -329,20 +345,22 @@ async def map(ctx, arg1=None):
                     breezeDraws += 1
             x += 1
         try:
-            breezeWinrate = '%.1f' % (round((breezeWins/breezeGames), 3)*100)
+            breezeWinrate = '%.1f' % (round((breezeWins/breezeGames), 3)*100) # calculating the winrate of the map Breeze
         except:
             breezeWinrate = 0
-        p = worksheetstats.get("Y62:AC71")
+        p = worksheetstats.get("Y62:AC71") # parse the player statistics
         playerstats = ""
 
-        for x in range(10):
+        for x in range(10): # get the information of each player
             try:
                 playerstats += "**" + players[x][0] + ":**   KDA: **" + p[x][0] + "** / **" + p[x][1] + "** / **" + p[x][2] + "**   |   K/D: **" + p[x][3] + "**   |   Win%: **" + p[x][4] + "**\n"
             except:
                 pass
+        
+        # sending the final message in discord
+        await ctx.send(":flag_tt: **__Breeze__\nWin%:** " + str(breezeWinrate) + "% (**W: **" + str(breezeWins) + " | **L: **" + str(breezeLosses) + " | **D: **" + str(breezeDraws) + " | **[**" + str(breezeGames) + "**]**)\n\n" + playerstats)
 
-        await ctx.send(":flag_pr: **__Breeze__\nWin%:** " + str(breezeWinrate) + "% (**W: **" + str(breezeWins) + " | **L: **" + str(breezeLosses) + " | **D: **" + str(breezeDraws) + " | **[**" + str(breezeGames) + "**]**)\n\n" + playerstats)
-
+# command for all agent specific information
 @client.command()
 async def agent(ctx, arg1=None):
 
@@ -580,10 +598,10 @@ async def player(ctx, arg1=None):
                                 maps_stats += ":flag_jp: **Split**          KDA: **" + maps[x][1] + "** / **" + maps[x][2] + "** / **" + maps[x][3] + "**   |   K/D: **" + maps[x][4] +"**   |   Win%: **" + maps[x][5] + "**\n"
                             elif x >= 36 and x <= 45:
                                 maps_stats += ":flag_it: **Ascent**     KDA: **" + maps[x][1] + "** / **" + maps[x][2] + "** / **" + maps[x][3] + "**   |   K/D: **" + maps[x][4] +"**   |   Win%: **" + maps[x][5] + "**\n"
-                            elif x >= 48 and x <= 59:
+                            elif x >= 48 and x <= 57:
                                 maps_stats += ":flag_ru: **Icebox**      KDA: **" + maps[x][1] + "** / **" + maps[x][2] + "** / **" + maps[x][3] + "**   |   K/D: **" + maps[x][4] +"**   |   Win%: **" + maps[x][5] + "**\n"
-                            elif x >= 62 and x <= 71:
-                                maps_stats += ":flag_pr: **Brezze**     KDA: **" + maps[x][1] + "** / **" + maps[x][2] + "** / **" + maps[x][3] + "**   |   K/D: **" + maps[x][4] +"**   |   Win%: **" + maps[x][5] + "**\n"
+                            elif x >= 60 and x <= 69:
+                                maps_stats += ":flag_tt: **Brezze**     KDA: **" + maps[x][1] + "** / **" + maps[x][2] + "** / **" + maps[x][3] + "**   |   K/D: **" + maps[x][4] +"**   |   Win%: **" + maps[x][5] + "**\n"
                     except:
                         continue
                 await ctx.send("**__" + players[y][0] + "__** aka. **" + playerfast[y] + "**\n" + playerstats + "\n" + maps_stats)
