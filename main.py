@@ -360,44 +360,6 @@ async def map(ctx, arg1=None):
         # sending the final message in discord
         await ctx.send(":flag_tt: **__Breeze__\nWin%:** " + str(breezeWinrate) + "% (**W: **" + str(breezeWins) + " | **L: **" + str(breezeLosses) + " | **D: **" + str(breezeDraws) + " | **[**" + str(breezeGames) + "**]**)\n\n" + playerstats)
 
-
-    worksheet = sh.get_worksheet(4)
-    data = worksheet.get("AW2:AZ")
-
-    bindGames = 0
-    havenGames = 0
-    splitGames = 0
-    ascentGames = 0
-    iceboxGames = 0
-    breezeGames = 0
-
-    bindAWins = 0
-    bindDWins = 0
-    havenAWins = 0
-    havenDWins = 0
-    splitAWins = 0
-    splitDWins = 0
-    ascentAWins = 0
-    ascentDWins = 0
-    iceboxAWins = 0
-    iceboxDWins = 0
-    breezeAWins = 0
-    breezeDWins = 0
-
-    x = 1
-    print(len(data))
-    while x < len(data):
-        if data[x][3] == "Bind":
-            bindGames += 1
-            if data[x][2] == "D":
-                bindDWins += data[x][0]
-                bindAWins += data[x][1]
-            else:
-                bindAWins += data[x][0]
-                bindDWins += data[x][1]
-
-    await ctx.send(":flag_ma:**Bind**   A. Wins/Match: **" + str(round(bindAWins/bindGames,2)) + "**   |   D. Wins/Match: **" + str(round(bindDWins/bindGames,2)))
-
 # command for all round specific information
 @client.command()
 async def rounds(ctx):
