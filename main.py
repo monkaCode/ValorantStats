@@ -870,7 +870,7 @@ async def help(ctx, arg1):
     elif arg1.lower() == "game":
         await ctx.send("```?game <date> <time> <round-wins> <round-losses> <map> <SideOfFirstRound> <rounds> <p1-stats> <p2-stats> <p3-stats> <p4-stats> <p5-stats>```")
     else:
-        await ctx.send("This command doesn't exist.")
+        await ctx.send("See more info on Github: https://github.com/monkaCode/ValorantStats")
 
 keep_alive()
 # bot run with the token
