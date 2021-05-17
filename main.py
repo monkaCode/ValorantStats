@@ -776,6 +776,19 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
     player_submit = [[None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None]]
     error = False
 
+    rw_manuell = 0
+    rl_manuell = 0
+    x = 0
+    while x < len(rounds):
+        if rounds[x] == "W":
+            rw_manuell += 1
+        elif rounds[x] == "L":
+            rl_manuell += 1
+        else:
+            await ctx.send("Invalid wins and losses. Only use W and L.")
+            return
+        x += 1
+
     worksheet = sh.get_worksheet(1)
     if userID == developerID or userID == assistantID:
         pass
@@ -801,6 +814,9 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
         return
     if len(rounds) != int(rw) + int(rl):
         await ctx.send("You would submit to many or to few rounds.")
+        return
+    if rw_manuell != rw or rl_manuell != rl:
+        await ctx.send("Incorrect rounds. Check again if they fit to the end result.")
         return
     if int(rw) + int(rl) > 32:
         await ctx.send("The game is too long to submit. (max. 32 Rounds)")
