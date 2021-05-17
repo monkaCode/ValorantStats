@@ -12,7 +12,7 @@ players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team member
 
 # general information
 playerfast = [] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
-agents = ["PX", "JT", "SA", "SV", "BR", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
+agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 developerID = 0 # discrod ID of the developer
 assistantID = 0 # discord ID of the person who can also add games
 
