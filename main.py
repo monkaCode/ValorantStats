@@ -796,10 +796,10 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
         x += 1
 
     worksheet = sh.get_worksheet(1)
-    if userID != developerID or userID != assistantID:
+    if userID != developerID and userID != assistantID:
         await ctx.send("You aren't allowed to submit a new game.")
         return
-    if map1 != "Bind" or map1 != "Haven" or map1 != "Split" or map1 != "Ascent" or map1 != "Icebox" or map1 != "Breeze":
+    if map1 != "Bind" and map1 != "Haven" and map1 != "Split" and map1 != "Ascent" and map1 != "Icebox" and map1 != "Breeze":
         await ctx.send("This map isn't valid or be sure that it is in the right upper and lowercase.")
         return
     if firstSide.upper() == "A":
@@ -882,7 +882,8 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
             stats = ""
             for x in range(len(player_str)):
                 stats += "**Player:** " + player_str[x][0] + "   |   **Agent:** " + player_str[x][1] + "   |   **KDA:** " + game_player[x][2] + " / " + game_player[x][3] + " / " + game_player[x][4] + "\n"
-            await ctx.send("Created the game with following attributes!\n**Date:** " + date + "   |   **Time:** " + time + "\n**Map:** " + map1 + "   |   **First Round Site:** " + firstSide_str + "\n**Result:** " + rw + ":" + rl + "\n**Player specific stats:**\n" + stats)
+                print(stats)
+            await ctx.send("Created the game with following attributes!\n**Date:** " + date + "   |   **Time:** " + time + "\n**Map:** " + map1 + "   |   **First Round Site:** " + firstSide_str + "\n**Result:** " + rw + " : " + rl + "\n**Player specific stats:**\n" + stats)
 
 @client.command()
 async def help(ctx, arg1):
