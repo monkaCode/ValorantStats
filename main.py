@@ -17,6 +17,7 @@ players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team member
 # general information
 playerfast = [settings_str[4].replace("Player 1: ", ""), settings_str[5].replace("Player 2: ", ""), settings_str[6].replace("Player 3: ", ""), settings_str[7].replace("Player 4: ", ""), settings_str[8].replace("Player 5: ", ""), settings_str[9].replace("Player 6: ", ""), settings_str[10].replace("Player 7: ", ""), settings_str[11].replace("Player 8: ", ""), settings_str[12].replace("Player 9: ", ""), settings_str[13].replace("Player 10: ", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
 agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
+agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra"]
 
 developerID = int(settings_str[0].replace("DeveloperID: ", "")) # discrod ID of the developer
 assistantID = int(settings_str[1].replace("AssistantID: ", "")) # discord ID of the person who can also add games
@@ -795,20 +796,18 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
         x += 1
 
     worksheet = sh.get_worksheet(1)
-    if userID == developerID or userID == assistantID:
-        pass
-    else:
+    if userID != developerID or userID != assistantID:
         await ctx.send("You aren't allowed to submit a new game.")
         return
-    if map1 == "Bind" or map1 == "Haven" or map1 == "Split" or map1 == "Ascent" or map1 == "Icebox" or map1 == "Breeze":
-        pass
-    else:
+    if map1 != "Bind" or map1 != "Haven" or map1 != "Split" or map1 != "Ascent" or map1 != "Icebox" or map1 != "Breeze":
         await ctx.send("This map isn't valid or be sure that it is in the right upper and lowercase.")
         return
     if firstSide.upper() == "A":
+        firstSide_str = "Attacker"
         secondSide = "D"
         pass
     elif firstSide.upper() == "D":
+        firstSide_str = "Defender"
         secondSide = "A"
         pass
     else:
@@ -820,7 +819,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
     if len(rounds) != int(rw) + int(rl):
         await ctx.send("You would submit to many or to few rounds.")
         return
-    if rw_manuell != rw or rl_manuell != rl:
+    if rw_manuell != int(rw) or rl_manuell != int(rl):
         await ctx.send("Incorrect rounds. Check again if they fit to the end result.")
         return
     if int(rw) + int(rl) > 32:
@@ -836,9 +835,11 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                 game_player[x][3] = int(game_player[x][3])
                 game_player[x][4] = int(game_player[x][4])
 
+                player_str = []
                 playerFound = False
                 for y in range(10):
                     if game_player[x][0].lower() == players[y][0].lower() or game_player[x][0].lower() == playerfast[y].lower():
+                        player_str.append(player[y][0])
                         playerFound = True
                         game_player[x].append(y)
                         if game_player[x][5] == y:
@@ -849,6 +850,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                 agentFound = False
                 for y in range(len(agents)):
                     if game_player[x][1].lower() == agents[y].lower():
+                        player_str[x].append(agents_full[y])
                         agentFound = True
                         break
                     else:
@@ -877,7 +879,10 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                     worksheet.format(ascii_uppercase[x+5] + str(row), colorWin)
                 elif allrounds[x] == "L":
                     worksheet.format(ascii_uppercase[x+5] + str(row), colorLose)
-            await ctx.send("Created the game with following attributes!\n**Date:** " + date + "   |   **Time:** " + time + "\n**Round Wins:** " + rw + "   |   **Round Losses:** " + rl + "\n**Map:** " + map1 + "\n**Side of first round:** " + firstSide.upper())
+            stats = ""
+            for x in range(len(player_str)):
+                stats += "**Player:** " + player_str[x][0] + "   |   **Agent:** " + player_str[x][1] + "   |   **KDA:** " + game_player[x][2] + " / " + game_player[x][3] + " / " + game_player[x][4] + "\n"
+            await ctx.send("Created the game with following attributes!\n**Date:** " + date + "   |   **Time:** " + time + "\n**Map:** " + map1 + "   |   **First Round Site:** " + firstSide_str + "\n**Result:** " + rw + ":" + rl + "\n**Player specific stats:**\n" + stats)
 
 @client.command()
 async def help(ctx, arg1):
