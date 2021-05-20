@@ -839,7 +839,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                 playerFound = False
                 for y in range(10):
                     if game_player[x][0].lower() == players[y][0].lower() or game_player[x][0].lower() == playerfast[y].lower():
-                        player_str.append(player[y][0])
+                        player_str.append(players[y][0])
                         playerFound = True
                         game_player[x].append(y)
                         if game_player[x][5] == y:
