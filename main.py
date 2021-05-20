@@ -4,20 +4,22 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from keep_alive import keep_alive
 
+settings = open(r"settings.txt", "r")
+settings_str = settings.readlines()
+
 # The ID and range of a sample spreadsheet.
 gc = gspread.service_account(filename=r"credentials.json")
-sh = gc.open_by_key("") # key of the Google Sheet
+gsk = settings_str[15].replace("Google Sheets Key: ", "")
+sh = gc.open_by_key(gsk) # key of the Google Sheet
 
 players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
 
-
-settings = open(r"settings.txt", "r")
 # general information
-playerfast = [settings.readlines()[4].replace("Player 1: ", ""), settings.readlines()[5].replace("Player 2: ", ""), settings.readlines()[6].replace("Player 3: ", ""), settings.readlines()[7].replace("Player 4: ", ""), settings.readlines()[8].replace("Player 5: ", ""), settings.readlines()[9].replace("Player 6: ", ""), settings.readlines()[10].replace("Player 7: ", ""), settings.readlines()[11].replace("Player 8: ", ""), settings.readlines()[12].replace("Player 9: ", ""), settings.readlines()[13].replace("Player 10: ", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
+playerfast = [settings_str[4].replace("Player 1: ", ""), settings_str[5].replace("Player 2: ", ""), settings_str[6].replace("Player 3: ", ""), settings_str[7].replace("Player 4: ", ""), settings_str[8].replace("Player 5: ", ""), settings_str[9].replace("Player 6: ", ""), settings_str[10].replace("Player 7: ", ""), settings_str[11].replace("Player 8: ", ""), settings_str[12].replace("Player 9: ", ""), settings_str[13].replace("Player 10: ", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
 agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 
-developerID = int(settings.readlines()[0].replace("DeveloperID: ", "")) # discrod ID of the developer
-assistantID = int(settings.readlines()[1].replace("AssistantID: ", "")) # discord ID of the person who can also add games
+developerID = int(settings_str[0].replace("DeveloperID: ", "")) # discrod ID of the developer
+assistantID = int(settings_str[1].replace("AssistantID: ", "")) # discord ID of the person who can also add games
 
 # set a bot prefix
 client = commands.Bot(command_prefix='?', help_command=None)
