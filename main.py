@@ -13,8 +13,11 @@ players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team member
 # general information
 playerfast = [] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
 agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
-developerID = 0 # discrod ID of the developer
-assistantID = 0 # discord ID of the person who can also add games
+
+settings = open(r"settings.txt", "r")
+
+developerID = int(settings.readline().replace("DeveloperID: ", "")) # discrod ID of the developer
+assistantID = int(settings.readline().replace("AssistantID: ", "")) # discord ID of the person who can also add games
 
 # set a bot prefix
 client = commands.Bot(command_prefix='?', help_command=None)
