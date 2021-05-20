@@ -786,9 +786,9 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
     rl_manuell = 0
     x = 0
     while x < len(rounds):
-        if rounds[x] == "W":
+        if rounds[x].upper() == "W":
             rw_manuell += 1
-        elif rounds[x] == "L":
+        elif rounds[x].upper() == "L":
             rl_manuell += 1
         else:
             await ctx.send("Invalid wins and losses. Only use W and L.")
@@ -799,8 +799,8 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
     if userID != developerID and userID != assistantID:
         await ctx.send("You aren't allowed to submit a new game.")
         return
-    if map1 != "Bind" and map1 != "Haven" and map1 != "Split" and map1 != "Ascent" and map1 != "Icebox" and map1 != "Breeze":
-        await ctx.send("This map isn't valid or be sure that it is in the right upper and lowercase.")
+    if map1.lower() != "bind" and map1.lower() != "haven" and map1.lower() != "split" and map1.lower() != "ascent" and map1.lower() != "icebox" and map1.lower() != "breeze":
+        await ctx.send("This isn't a valid map.")
         return
     if firstSide.upper() == "A":
         firstSide_str = "Attacker"
@@ -827,6 +827,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
     else:
         player_str = []
         player_agent_str = []
+        map1 = map1.capitalize()
         for x in range(5):
             try:
                 
