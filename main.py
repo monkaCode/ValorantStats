@@ -15,7 +15,7 @@ sh = gc.open_by_key(gsk) # key of the Google Sheet
 players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
 
 # general information
-playerfast = [settings_str[4].replace("Player 1: ", ""), settings_str[5].replace("Player 2: ", ""), settings_str[6].replace("Player 3: ", ""), settings_str[7].replace("Player 4: ", ""), settings_str[8].replace("Player 5: ", ""), settings_str[9].replace("Player 6: ", ""), settings_str[10].replace("Player 7: ", ""), settings_str[11].replace("Player 8: ", ""), settings_str[12].replace("Player 9: ", ""), settings_str[13].replace("Player 10: ", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
+playerfast = [settings_str[4].replace("Player 1: ", "").replace("\n", ""), settings_str[5].replace("Player 2: ", "").replace("\n", ""), settings_str[6].replace("Player 3: ", "").replace("\n", ""), settings_str[7].replace("Player 4: ", "").replace("\n", ""), settings_str[8].replace("Player 5: ", "").replace("\n", ""), settings_str[9].replace("Player 6: ", "").replace("\n", ""), settings_str[10].replace("Player 7: ", "").replace("\n", ""), settings_str[11].replace("Player 8: ", "").replace("\n", ""), settings_str[12].replace("Player 9: ", "").replace("\n", ""), settings_str[13].replace("Player 10: ", "").replace("\n", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
 agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra"]
 
@@ -825,6 +825,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
     if int(rw) + int(rl) > 32:
         await ctx.send("The game is too long to submit. (max. 32 Rounds)")
     else:
+        player_str = []
         for x in range(5):
             try:
                 
@@ -835,7 +836,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                 game_player[x][3] = int(game_player[x][3])
                 game_player[x][4] = int(game_player[x][4])
 
-                player_str = []
+                
                 playerFound = False
                 for y in range(10):
                     if game_player[x][0].lower() == players[y][0].lower() or game_player[x][0].lower() == playerfast[y].lower():
