@@ -10,14 +10,14 @@ sh = gc.open_by_key("") # key of the Google Sheet
 
 players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
 
-# general information
-playerfast = [] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
-agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 
 settings = open(r"settings.txt", "r")
+# general information
+playerfast = [settings.readlines()[4].replace("Player 1: ", ""), settings.readlines()[5].replace("Player 2: ", ""), settings.readlines()[6].replace("Player 3: ", ""), settings.readlines()[7].replace("Player 4: ", ""), settings.readlines()[8].replace("Player 5: ", ""), settings.readlines()[9].replace("Player 6: ", ""), settings.readlines()[10].replace("Player 7: ", ""), settings.readlines()[11].replace("Player 8: ", ""), settings.readlines()[12].replace("Player 9: ", ""), settings.readlines()[13].replace("Player 10: ", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
+agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 
-developerID = int(settings.readline().replace("DeveloperID: ", "")) # discrod ID of the developer
-assistantID = int(settings.readline().replace("AssistantID: ", "")) # discord ID of the person who can also add games
+developerID = int(settings.readlines()[0].replace("DeveloperID: ", "")) # discrod ID of the developer
+assistantID = int(settings.readlines()[1].replace("AssistantID: ", "")) # discord ID of the person who can also add games
 
 # set a bot prefix
 client = commands.Bot(command_prefix='?', help_command=None)
