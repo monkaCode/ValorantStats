@@ -368,159 +368,164 @@ async def map(ctx, arg1=None):
 
 # command for all round specific information
 @client.command()
-async def rounds(ctx):
-    worksheet = sh.get_worksheet(4)
-    data = worksheet.get("AW2:BB")
+async def rounds(ctx, arg1=None):
+    if arg1 == None:
+        worksheet = sh.get_worksheet(4)
+        data = worksheet.get("AW2:BB")
 
-    bindGames = 0
-    havenGames = 0
-    splitGames = 0
-    ascentGames = 0
-    iceboxGames = 0
-    breezeGames = 0
+        bindGames = 0
+        havenGames = 0
+        splitGames = 0
+        ascentGames = 0
+        iceboxGames = 0
+        breezeGames = 0
 
-    bindARounds = 0
-    bindDRounds = 0
-    havenARounds = 0
-    havenDRounds = 0
-    splitARounds = 0
-    splitDRounds = 0
-    ascentARounds = 0
-    ascentDRounds = 0
-    iceboxARounds = 0
-    iceboxDRounds = 0
-    breezeARounds = 0
-    breezeDRounds = 0
+        bindARounds = 0
+        bindDRounds = 0
+        havenARounds = 0
+        havenDRounds = 0
+        splitARounds = 0
+        splitDRounds = 0
+        ascentARounds = 0
+        ascentDRounds = 0
+        iceboxARounds = 0
+        iceboxDRounds = 0
+        breezeARounds = 0
+        breezeDRounds = 0
 
-    bindAWins = 0
-    bindDWins = 0
-    havenAWins = 0
-    havenDWins = 0
-    splitAWins = 0
-    splitDWins = 0
-    ascentAWins = 0
-    ascentDWins = 0
-    iceboxAWins = 0
-    iceboxDWins = 0
-    breezeAWins = 0
-    breezeDWins = 0
+        bindAWins = 0
+        bindDWins = 0
+        havenAWins = 0
+        havenDWins = 0
+        splitAWins = 0
+        splitDWins = 0
+        ascentAWins = 0
+        ascentDWins = 0
+        iceboxAWins = 0
+        iceboxDWins = 0
+        breezeAWins = 0
+        breezeDWins = 0
 
-    x = 0
-    while x < len(data):
+        x = 0
+        while x < len(data):
+            try:
+                if data[x][3] == "Bind": # checking if the game was played on Bind
+                    bindGames += 1
+                    if data[x][2] == "D":
+                        bindDWins += int(data[x][0])
+                        bindAWins += int(data[x][1])
+                        bindDRounds += int(data[x][0]) + int(data[x][4])
+                        bindARounds += int(data[x][1]) + int(data[x][5])
+                    elif data[x][2] == "A":
+                        bindAWins += int(data[x][0])
+                        bindDWins += int(data[x][1])
+                        bindARounds += int(data[x][0]) + int(data[x][4])
+                        bindDRounds += int(data[x][1]) + int(data[x][5])
+                if data[x][3] == "Haven": # checking if the game was played on Haven
+                    havenGames += 1
+                    if data[x][2] == "D":
+                        havenDWins += int(data[x][0])
+                        havenAWins += int(data[x][1])
+                        havenDRounds += int(data[x][0]) + int(data[x][4])
+                        havenARounds += int(data[x][1]) + int(data[x][5])
+                    elif data[x][2] == "A":
+                        havenAWins += int(data[x][0])
+                        havenDWins += int(data[x][1])
+                        havenARounds += int(data[x][0]) + int(data[x][4])
+                        havenDRounds += int(data[x][1]) + int(data[x][5])
+                if data[x][3] == "Split": # checking if the game was played on Split
+                    splitGames += 1
+                    if data[x][2] == "D":
+                        splitDWins += int(data[x][0])
+                        splitAWins += int(data[x][1])
+                        splitDRounds += int(data[x][0]) + int(data[x][4])
+                        splitARounds += int(data[x][1]) + int(data[x][5])
+                    elif data[x][2] == "A":
+                        splitAWins += int(data[x][0])
+                        splitDWins += int(data[x][1])
+                        splitARounds += int(data[x][0]) + int(data[x][4])
+                        splitDRounds += int(data[x][1]) + int(data[x][5])
+                if data[x][3] == "Ascent": # checking if the game was played on Ascent
+                    ascentGames += 1
+                    if data[x][2] == "D":
+                        ascentDWins += int(data[x][0])
+                        ascentAWins += int(data[x][1])
+                        ascentDRounds += int(data[x][0]) + int(data[x][4])
+                        ascentARounds += int(data[x][1]) + int(data[x][5])
+                    elif data[x][2] == "A":
+                        ascentAWins += int(data[x][0])
+                        ascentDWins += int(data[x][1])
+                        ascentARounds += int(data[x][0]) + int(data[x][4])
+                        ascentDRounds += int(data[x][1]) + int(data[x][5])
+                if data[x][3] == "Icebox": # checking if the game was played on Icebox
+                    iceboxGames += 1
+                    if data[x][2] == "D":
+                        iceboxDWins += int(data[x][0])
+                        iceboxAWins += int(data[x][1])
+                        iceboxDRounds += int(data[x][0]) + int(data[x][4])
+                        iceboxARounds += int(data[x][1]) + int(data[x][5])
+                    elif data[x][2] == "A":
+                        iceboxAWins += int(data[x][0])
+                        iceboxDWins += int(data[x][1])
+                        iceboxARounds += int(data[x][0]) + int(data[x][4])
+                        iceboxDRounds += int(data[x][1]) + int(data[x][5])
+                if data[x][3] == "Breeze": # checking if the game was played on Breeze
+                    breezeGames += 1
+                    if data[x][2] == "D":
+                        breezeDWins += int(data[x][0])
+                        breezeAWins += int(data[x][1])
+                        breezeDRounds += int(data[x][0]) + int(data[x][4])
+                        breezeARounds += int(data[x][1]) + int(data[x][5])
+                    elif data[x][2] == "A":
+                        breezeAWins += int(data[x][0])
+                        breezeDWins += int(data[x][1])
+                        breezeARounds += int(data[x][0]) + int(data[x][4])
+                        breezeDRounds += int(data[x][1]) + int(data[x][5])
+            except:
+                pass
+            x += 1
+
         try:
-            if data[x][3] == "Bind": # checking if the game was played on Bind
-                bindGames += 1
-                if data[x][2] == "D":
-                    bindDWins += int(data[x][0])
-                    bindAWins += int(data[x][1])
-                    bindDRounds += int(data[x][0]) + int(data[x][4])
-                    bindARounds += int(data[x][1]) + int(data[x][5])
-                elif data[x][2] == "A":
-                    bindAWins += int(data[x][0])
-                    bindDWins += int(data[x][1])
-                    bindARounds += int(data[x][0]) + int(data[x][4])
-                    bindDRounds += int(data[x][1]) + int(data[x][5])
-            if data[x][3] == "Haven": # checking if the game was played on Haven
-                havenGames += 1
-                if data[x][2] == "D":
-                    havenDWins += int(data[x][0])
-                    havenAWins += int(data[x][1])
-                    havenDRounds += int(data[x][0]) + int(data[x][4])
-                    havenARounds += int(data[x][1]) + int(data[x][5])
-                elif data[x][2] == "A":
-                    havenAWins += int(data[x][0])
-                    havenDWins += int(data[x][1])
-                    havenARounds += int(data[x][0]) + int(data[x][4])
-                    havenDRounds += int(data[x][1]) + int(data[x][5])
-            if data[x][3] == "Split": # checking if the game was played on Split
-                splitGames += 1
-                if data[x][2] == "D":
-                    splitDWins += int(data[x][0])
-                    splitAWins += int(data[x][1])
-                    splitDRounds += int(data[x][0]) + int(data[x][4])
-                    splitARounds += int(data[x][1]) + int(data[x][5])
-                elif data[x][2] == "A":
-                    splitAWins += int(data[x][0])
-                    splitDWins += int(data[x][1])
-                    splitARounds += int(data[x][0]) + int(data[x][4])
-                    splitDRounds += int(data[x][1]) + int(data[x][5])
-            if data[x][3] == "Ascent": # checking if the game was played on Ascent
-                ascentGames += 1
-                if data[x][2] == "D":
-                    ascentDWins += int(data[x][0])
-                    ascentAWins += int(data[x][1])
-                    ascentDRounds += int(data[x][0]) + int(data[x][4])
-                    ascentARounds += int(data[x][1]) + int(data[x][5])
-                elif data[x][2] == "A":
-                    ascentAWins += int(data[x][0])
-                    ascentDWins += int(data[x][1])
-                    ascentARounds += int(data[x][0]) + int(data[x][4])
-                    ascentDRounds += int(data[x][1]) + int(data[x][5])
-            if data[x][3] == "Icebox": # checking if the game was played on Icebox
-                iceboxGames += 1
-                if data[x][2] == "D":
-                    iceboxDWins += int(data[x][0])
-                    iceboxAWins += int(data[x][1])
-                    iceboxDRounds += int(data[x][0]) + int(data[x][4])
-                    iceboxARounds += int(data[x][1]) + int(data[x][5])
-                elif data[x][2] == "A":
-                    iceboxAWins += int(data[x][0])
-                    iceboxDWins += int(data[x][1])
-                    iceboxARounds += int(data[x][0]) + int(data[x][4])
-                    iceboxDRounds += int(data[x][1]) + int(data[x][5])
-            if data[x][3] == "Breeze": # checking if the game was played on Breeze
-                breezeGames += 1
-                if data[x][2] == "D":
-                    breezeDWins += int(data[x][0])
-                    breezeAWins += int(data[x][1])
-                    breezeDRounds += int(data[x][0]) + int(data[x][4])
-                    breezeARounds += int(data[x][1]) + int(data[x][5])
-                elif data[x][2] == "A":
-                    breezeAWins += int(data[x][0])
-                    breezeDWins += int(data[x][1])
-                    breezeARounds += int(data[x][0]) + int(data[x][4])
-                    breezeDRounds += int(data[x][1]) + int(data[x][5])
+            bindAWinrate = "%.1f" % (round(bindAWins/bindARounds,3) * 100)
+            bindDWinrate = "%.1f" % (round(bindDWins/bindDRounds,3) * 100)
         except:
-            pass
-        x += 1
-
-    try:
-        bindAWinrate = "%.1f" % (round(bindAWins/bindARounds,3) * 100)
-        bindDWinrate = "%.1f" % (round(bindDWins/bindDRounds,3) * 100)
-    except:
-        bindAWinrate = "0"
-        bindDWinrate = "0"
-    try:
-        havenAWinrate = "%.1f" % (round(havenAWins/havenARounds,3) * 100)
-        havenDWinrate = "%.1f" % (round(havenDWins/havenDRounds,3) * 100)
-    except:
-        havenAWinrate = "0"
-        havenDWinrate = "0"
-    try:
-        splitAWinrate = "%.1f" % (round(splitAWins/splitARounds,3) * 100)
-        splitDWinrate = "%.1f" % (round(splitDWins/splitDRounds,3) * 100)
-    except:
-        splitAWinrate = "0"
-        splitDWinrate = "0"
-    try:
-        ascentAWinrate = "%.1f" % (round(ascentAWins/ascentARounds,3) * 100)
-        ascentDWinrate = "%.1f" % (round(ascentDWins/ascentDRounds,3) * 100)
-    except:
-        ascentAWinrate = "0"
-        ascentDWinrate = "0"
-    try:
-        iceboxAWinrate = "%.1f" % (round(iceboxAWins/iceboxARounds,3) * 100)
-        iceboxDWinrate = "%.1f" % (round(iceboxDWins/iceboxDRounds,3) * 100)
-    except:
-        iceboxAWinrate = "0"
-        iceboxDWinrate = "0"
-    try:
-        breezeAWinrate = "%.1f" % (round(breezeAWins/breezeARounds,3) * 100)
-        breezeDWinrate = "%.1f" % (round(breezeDWins/breezeARounds,3) * 100)
-    except:
-        breezeAWinrate = "0"
-        breezeDWinrate = "0"
-    await ctx.send(":flag_ma: **BIND**         ATT Win%: **" + bindAWinrate + "%**   |   DEF Win%: **" + bindDWinrate + "%**   |   Games: **" + str(bindGames) + "**\n:flag_bt: **HAVEN**    ATT Win%: **" + havenAWinrate + "%**   |   DEF Win%: **" + havenDWinrate + "%**   |   Games: **" + str(havenGames) + "**\n:flag_jp: **SPLIT**        ATT Win%: **" + splitAWinrate + "%**   |   DEF Win%: **" + splitDWinrate + "%**   |   Games: **" + str(splitGames) + "**\n:flag_it: **ASCENT**   ATT Win%: **" + ascentAWinrate + "%**   |   DEF Win%: **" + ascentDWinrate + "%**   |   Games: **" + str(ascentGames) + "**\n:flag_ru: **ICEBOX**    ATT Win%: **" + iceboxAWinrate + "%**   |   DEF Win%: **" + iceboxDWinrate + "%**   |   Games: **" + str(iceboxGames) + "**\n:flag_tt: **BREEZE**    ATT Win%: **" + breezeAWinrate + "%**   |   DEF Win%: **" + breezeDWinrate + "%**   |   Games: **" + str(breezeGames) + "**")
+            bindAWinrate = "0"
+            bindDWinrate = "0"
+        try:
+            havenAWinrate = "%.1f" % (round(havenAWins/havenARounds,3) * 100)
+            havenDWinrate = "%.1f" % (round(havenDWins/havenDRounds,3) * 100)
+        except:
+            havenAWinrate = "0"
+            havenDWinrate = "0"
+        try:
+            splitAWinrate = "%.1f" % (round(splitAWins/splitARounds,3) * 100)
+            splitDWinrate = "%.1f" % (round(splitDWins/splitDRounds,3) * 100)
+        except:
+            splitAWinrate = "0"
+            splitDWinrate = "0"
+        try:
+            ascentAWinrate = "%.1f" % (round(ascentAWins/ascentARounds,3) * 100)
+            ascentDWinrate = "%.1f" % (round(ascentDWins/ascentDRounds,3) * 100)
+        except:
+            ascentAWinrate = "0"
+            ascentDWinrate = "0"
+        try:
+            iceboxAWinrate = "%.1f" % (round(iceboxAWins/iceboxARounds,3) * 100)
+            iceboxDWinrate = "%.1f" % (round(iceboxDWins/iceboxDRounds,3) * 100)
+        except:
+            iceboxAWinrate = "0"
+            iceboxDWinrate = "0"
+        try:
+            breezeAWinrate = "%.1f" % (round(breezeAWins/breezeARounds,3) * 100)
+            breezeDWinrate = "%.1f" % (round(breezeDWins/breezeARounds,3) * 100)
+        except:
+            breezeAWinrate = "0"
+            breezeDWinrate = "0"
+        await ctx.send(":flag_ma: **BIND**         ATT Win%: **" + bindAWinrate + "%**   |   DEF Win%: **" + bindDWinrate + "%**   |   Games: **" + str(bindGames) + "**\n:flag_bt: **HAVEN**    ATT Win%: **" + havenAWinrate + "%**   |   DEF Win%: **" + havenDWinrate + "%**   |   Games: **" + str(havenGames) + "**\n:flag_jp: **SPLIT**        ATT Win%: **" + splitAWinrate + "%**   |   DEF Win%: **" + splitDWinrate + "%**   |   Games: **" + str(splitGames) + "**\n:flag_it: **ASCENT**   ATT Win%: **" + ascentAWinrate + "%**   |   DEF Win%: **" + ascentDWinrate + "%**   |   Games: **" + str(ascentGames) + "**\n:flag_ru: **ICEBOX**    ATT Win%: **" + iceboxAWinrate + "%**   |   DEF Win%: **" + iceboxDWinrate + "%**   |   Games: **" + str(iceboxGames) + "**\n:flag_tt: **BREEZE**    ATT Win%: **" + breezeAWinrate + "%**   |   DEF Win%: **" + breezeDWinrate + "%**   |   Games: **" + str(breezeGames) + "**")
+    elif arg1.lower() == "pistol":
+        worksheet = sh.get_worksheet(3)
+        data = worksheet.get("I16:K42")
+        await ctx.send(":flag_ma: **BIND**         ATT Win%: **" + data[0][2] + "**   |   DEF Win%: **" + data[1][2] + "**   |   Games: **" + data[0][1] + "**")
 
 # command for all agent specific information
 @client.command()
