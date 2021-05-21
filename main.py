@@ -786,6 +786,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
     game_player = [p1, p2, p3, p4, p5]
     player_submit = [[None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None]]
     error = False
+    error_str = ""
 
     rw_manuell = 0
     rl_manuell = 0
@@ -858,6 +859,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                 for y in range(x):
                     if player_str[x] == player_str[y]:
                         error = True
+                        error_str = "The player " + player_str[x] + " already exist one time."
                 agentFound = False
                 for y in range(len(agents)):
                     if game_player[x][1].lower() == agents[y].lower():
@@ -895,7 +897,9 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                 stats += "**Player:** " + player_str[x] + "   |   **Agent:** " + player_agent_str + "   |   **KDA:** " + str(game_player[x][2]) + " / " + str(game_player[x][3]) + " / " + str(game_player[x][4]) + "\n"
                 print(stats)
             await ctx.send("Created the game with following attributes!\n**Date:** " + date + "   |   **Time:** " + time + "\n**Map:** " + map1 + "   |   **First Round Site:** " + firstSide_str + "\n**Result:** " + rw + " : " + rl + "\n\nPlayer specific stats:\n" + stats)
-
+        elif error == True:
+            if error_str != "":
+                await ctx.send(error_str)
 @client.command()
 async def help(ctx, arg1):
 
