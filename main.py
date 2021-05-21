@@ -855,6 +855,9 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                         break
                     else:
                         pass
+                for y in range(x):
+                    if player_str[x] == player_str[y]:
+                        error = True
                 agentFound = False
                 for y in range(len(agents)):
                     if game_player[x][1].lower() == agents[y].lower():
