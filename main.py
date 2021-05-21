@@ -1,7 +1,6 @@
 import discord # install with: pip install discord.py
 from discord.ext import commands # to use the commands from discord.ext
 import gspread
-import gdata
 from oauth2client.service_account import ServiceAccountCredentials
 from keep_alive import keep_alive
 
@@ -526,8 +525,6 @@ async def rounds(ctx, arg1=None):
     elif arg1.lower() == "pistol":
         worksheet = sh.get_worksheet(3)
         data = worksheet.get("I16:K42")
-        color = data[0][0].getBackground()
-        print(color)
         await ctx.send(":flag_ma: **BIND**         ATT Win%: **" + data[0][2] + "**   |   DEF Win%: **" + data[1][2] + "**   |   Games: **" + data[0][1] + "**")
 
 # command for all agent specific information
