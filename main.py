@@ -894,7 +894,7 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                     worksheet.format(ascii_uppercase[x+5] + str(row), colorLose)
             stats = ""
             for x in range(len(player_str)):
-                stats += "**Player:** " + player_str[x] + "   |   **Agent:** " + player_agent_str + "   |   **KDA:** " + str(game_player[x][2]) + " / " + str(game_player[x][3]) + " / " + str(game_player[x][4]) + "\n"
+                stats += "**Player:** " + player_str[x] + "   |   **Agent:** " + player_agent_str[x] + "   |   **KDA:** " + str(game_player[x][2]) + " / " + str(game_player[x][3]) + " / " + str(game_player[x][4]) + "\n"
                 print(stats)
             await ctx.send("Created the game with following attributes!\n**Date:** " + date + "   |   **Time:** " + time + "\n**Map:** " + map1 + "   |   **First Round Site:** " + firstSide_str + "\n**Result:** " + rw + " : " + rl + "\n\nPlayer specific stats:\n" + stats)
         elif error == True:
