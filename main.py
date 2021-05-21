@@ -856,10 +856,6 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                         break
                     else:
                         pass
-                for y in range(x):
-                    if player_str[x] == player_str[y]:
-                        error = True
-                        error_str = "The player " + player_str[x] + " already exist one time."
                 agentFound = False
                 for y in range(len(agents)):
                     if game_player[x][1].lower() == agents[y].lower():
@@ -868,6 +864,13 @@ async def game(ctx, date, time, rw, rl, map1, firstSide, rounds, p1=None, p2=Non
                         break
                     else:
                         pass
+                for y in range(x):
+                    if player_str[x] == player_str[y]:
+                        error = True
+                        error_str = "The player " + player_str[x] + " already exist one time."
+                    elif player_agent_str[x] == player_agent_str[y]:
+                        error = True
+                        error_str = player_str[y] + " already plays " + player_agent_str[x] + "."
                 if agentFound == False:
                     await ctx.send("One agent doesn't exist.")
                     error = True
