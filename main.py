@@ -14,6 +14,7 @@ sh = gc.open_by_key(gsk)
 
 players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
 playerfast = [settings_str[4].replace("Player 1: ", "").replace("\n", ""), settings_str[5].replace("Player 2: ", "").replace("\n", ""), settings_str[6].replace("Player 3: ", "").replace("\n", ""), settings_str[7].replace("Player 4: ", "").replace("\n", ""), settings_str[8].replace("Player 5: ", "").replace("\n", ""), settings_str[9].replace("Player 6: ", "").replace("\n", ""), settings_str[10].replace("Player 7: ", "").replace("\n", ""), settings_str[11].replace("Player 8: ", "").replace("\n", ""), settings_str[12].replace("Player 9: ", "").replace("\n", ""), settings_str[13].replace("Player 10: ", "").replace("\n", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
+playerwidth = sh.get_worksheet(0).get("D3:D12")
 
 agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra"]
@@ -53,7 +54,7 @@ async def on_command_error(ctx, error):
 @client.command()
 async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=None, played_rounds=None, p1=None, p2=None, p3=None, p4=None, p5=None):
     
-
+    info = sh.get_worksheet(0)
     worksheet = sh.get_worksheet(1)
     error = []
     mapExist = False
@@ -90,7 +91,7 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
                     error.append("You missed some stats for the **" + str(x+1) + ".** player.")
                     break
                 game_player[x][0] = str(game_player[x][0])
-                game_player[x][1] = str(game_player[x][1]).upper()
+                game_player[x][1] = agentShortName(game_player[x][1])
                 try:
                     game_player[x][2] = int(game_player[x][2])
                     game_player[x][3] = int(game_player[x][3])
@@ -149,8 +150,9 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
         worksheet.append_row([date, played_map.capitalize(), int(rw), int(rl), firstSide.upper(), played_rounds.upper(), player_submit[0][1], player_submit[0][2], player_submit[0][3], player_submit[0][4], player_submit[1][1], player_submit[1][2], player_submit[1][3], player_submit[1][4], player_submit[2][1], player_submit[2][2], player_submit[2][3], player_submit[2][4], player_submit[3][1], player_submit[3][2], player_submit[3][3], player_submit[3][4], player_submit[4][1], player_submit[4][2], player_submit[4][3], player_submit[4][4], player_submit[5][1], player_submit[5][2], player_submit[5][3], player_submit[5][4], player_submit[6][1], player_submit[6][2], player_submit[6][3], player_submit[6][4], player_submit[7][1], player_submit[7][2], player_submit[7][3], player_submit[7][4], player_submit[8][1], player_submit[8][2], player_submit[8][3], player_submit[8][4], player_submit[9][1], player_submit[9][2], player_submit[9][3], player_submit[9][4]])
         stats = ""
         for x in range(len(player_str)):
-            stats += getCountry(player_agent_str[x]) + " **" + player_agent_str[x].upper() + "**" + getCapsGap(player_agent_str[x]) + "**" + player_str[x] + "**   |   **KDA:** " + str(game_player[x][2]) + " / " + str(game_player[x][3]) + " / " + str(game_player[x][4]) + "\n"
-        await ctx.send("Created the game with following attributes!\n**Date:** " + date + "\n**Map:** " + played_map.capitalize() + "   |   **First Round Site:** " + firstSide.upper() + "\n**Result:** " + rw + " : " + rl + "\n\nPlayer specific stats:\n" + stats)
+            stats += getCountry(player_agent_str[x]) + " **" + player_agent_str[x].upper() + "**" + getCapsGap(player_agent_str[x]) + "**" + player_str[x] + int(info.get("D3:D12")[game_player[x][5]][0])*" " + "**   |   KDA: **" + str(game_player[x][2]) + "** / **" + str(game_player[x][3]) + "** / **" + str(game_player[x][4]) + "**\n"
+        await ctx.send("Created the game with following attributes!\nDate: **" + date + "**\nMap: **" + played_map.capitalize() + "**   |   First Round Site: **" + firstSide.upper() + "**\nResult: **" + rw + "** - **" + rl + "**\n\nPlayer specific stats:\n" + stats)
+
 @client.command()
 async def game(ctx, arg1=None):
 
@@ -215,7 +217,7 @@ async def game(ctx, arg1=None):
                 break
         playerStats = sorted(playerStats, key=itemgetter(2), reverse=True)
         for y in range(len(playerStats)):
-            player_stats_str += getCountry(playerStats[y][1]) + " **" + playerStats[y][0] + "**   Agent: **" + agentFullName(playerStats[y][1]) + "**   |   KDA: **" + str(playerStats[y][2]) + "** / **" + str(playerStats[y][3]) + "** / **" + str(playerStats[y][4]) + "**\n"
+            player_stats_str += getCountry(playerStats[y][1]) + " **" +agentFullName(playerStats[y][1]).upper() + "**" + getCapsGap(playerStats[y][1]) + "   **" + playerStats[y][0] + int(playerwidth[getPlayerIndex(playerStats[y][0])][0])*" " +"**   |   KDA: **" + str(playerStats[y][2]) + "** / **" + str(playerStats[y][3]) + "** / **" + str(playerStats[y][4]) + "**\n"
         for y in range(len(desc_round_list)):
             desc_round_str += " " + desc_round_list[y]
         await ctx.send("[**" + str(len(data)+1) + "**] Date: **" + str(data[x][0]) + "**   |   Map: **" + data[x][1] + "**\nResult: **" + str(data[x][2]) + "** - **" + str(data[x][3]) + "**\n\n" + desc_round_str + "\n" + your_round_str + "\n" + enemy_round_str + "\n.")
@@ -284,7 +286,7 @@ async def game(ctx, arg1=None):
                         break
                 playerStats = sorted(playerStats, key=itemgetter(2), reverse=True)
                 for y in range(len(playerStats)):
-                    player_stats_str += getCountry(playerStats[y][1]) + " **" + playerStats[y][0] + "**   Agent: **" + agentFullName(playerStats[y][1]) + "**   |   KDA: **" + str(playerStats[y][2]) + "** / **" + str(playerStats[y][3]) + "** / **" + str(playerStats[y][4]) + "**\n"
+                    player_stats_str += getCountry(playerStats[y][1]) + " **" +agentFullName(playerStats[y][1]).upper() + "**" + getCapsGap(playerStats[y][1]) + "   **" + playerStats[y][0] + int(playerwidth[getPlayerIndex(playerStats[y][0])][0])*" " + "**   |   KDA: **" + str(playerStats[y][2]) + "** / **" + str(playerStats[y][3]) + "** / **" + str(playerStats[y][4]) + "**\n"
                 for y in range(len(desc_round_list)):
                     desc_round_str += " " + desc_round_list[y]
                 await ctx.send("[**" + str(arg1) + "**] Date: **" + str(data[x][0]) + "**   |   Map: **" + data[x][1] + "**\nResult: **" + str(data[x][2]) + "** - **" + str(data[x][3]) + "**\n\n" + desc_round_str + "\n" + your_round_str + "\n" + enemy_round_str + "\n.")
@@ -364,7 +366,6 @@ async def player(ctx, arg1=None, arg2=None):
 
     
     for x in range(len(players)):
-        #print(str(type(arg1.lower())) + ": " + str(arg1.lower()) + "  |  " + str(type(players[x][0].lower())) + ": " + str(players[x][0].lower()))
         if arg1 == None:
             break
         elif arg1.lower() == players[x][0].lower() or arg1.lower() == playerfast[x].lower():
@@ -540,7 +541,7 @@ async def player(ctx, arg1=None, arg2=None):
 
         stats_str = ""
         for x in range(len(playerStats)):
-            stats_str += "**" + playerStats[x][0] + "**   KDA: **" + str("%.1f" % (round((playerStats[x][3]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][4]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][5]/playerStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((playerStats[x][3]/playerStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((playerStats[x][2]/playerStats[x][1]),3)*100)) + "%**   |   Games: **" + str(playerStats[x][1]) + "**\n"
+            stats_str += "**" + playerStats[x][0] + int(playerwidth[getPlayerIndex(playerStats[x][0])][0])*" " + "**   KDA: **" + str("%.1f" % (round((playerStats[x][3]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][4]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][5]/playerStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((playerStats[x][3]/playerStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((playerStats[x][2]/playerStats[x][1]),3)*100)) + "%**   |   Games: **" + str(playerStats[x][1]) + "**\n"
         await ctx.send(stats_str)
 
 @client.command()
@@ -557,111 +558,9 @@ async def rounds(ctx, arg1=None):
         defwins = 0
         defrounds = 0
         for y in range(len(maps)):
-            #try:
-            if data[x][0] == maps[y]:
-                if len(roundStats) == 0:
-                    if len(data[x][4]) > 24:
-                        value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
-                        for z in range(len(value[2])):
-                            if data[x][3] == "A":
-                                try:
-                                    if value[2][2*z] == "W":
-                                        attwins += 1
-                                        attrounds += 1
-                                    else:
-                                        attrounds += 1
-                                except:
-                                    break
-                                try:
-                                    if value[2][(2*z)+1] == "W":
-                                        defwins += 1
-                                        defrounds += 1
-                                    else:
-                                        defrounds += 1
-                                except:
-                                    break
-                            elif data[x][3] == "D":
-                                try:
-                                    if value[2][2*z] == "W":
-                                        defwins += 1
-                                        defrounds += 1
-                                    else:
-                                        defrounds += 1
-                                except:
-                                    break
-                                try:
-                                    if value[2][(2*z)+1] == "W":
-                                        attwins += 1
-                                        attrounds += 1
-                                    else:
-                                        attrounds += 1
-                                except:
-                                    break
-                        if data[x][3] == "A":
-                            roundStats.append([maps[y], len(value[0])+attrounds, value[0].count("W")+attwins, len(value[1])+defrounds, value[1].count("W")+defwins, 1])
-                        elif data[x][3] == "D":
-                            roundStats.append([maps[y], len(value[1])+attrounds, value[1].count("W")+attwins, len(value[0])+defrounds, value[0].count("W")+defwins, 1])
-                    else:
-                        value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
-                        if data[x][3] == "A":
-                            print(type(str({})) + " | " + str({}) + "\n" + type(str({})) + " | " + str({}) + "\n" + type(str({})) + " | " + str({}) + "\n" + type(str({})) + " | " + str({}) + "\n", format(maps[y], len(value[0]), value[0].count("W"), len(value[1]), value[1].count("W")))
-                            roundStats.append([maps[y], len(value[0]), value[0].count("W"), len(value[1]), value[1].count("W"), 1])
-                        elif data[x][3] == "D":
-                            roundStats.append([maps[y], len(value[1]), value[1].count("W"), len(value[0]), value[0].count("W"), 1])
-
-                else:
-                    mapNew = False
-                    for z in range(len(roundStats)):
-                        if roundStats[z][0] == maps[y]:
-                            if len(data[x][4]) > 24:
-                                value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
-                                for xx in range(len(value[2])):
-                                    if data[x][3] == "A":
-                                        try:
-                                            if value[2][2*xx] == "W":
-                                                attwins += 1
-                                                attrounds += 1
-                                            else:
-                                                attrounds += 1
-                                        except:
-                                            break
-                                        try:
-                                            if value[2][(2*xx)+1] == "W":
-                                                defwins += 1
-                                                defrounds += 1
-                                            else:
-                                                defrounds += 1
-                                        except:
-                                            break
-                                    elif data[x][3] == "D":
-                                        try:
-                                            if value[2][2*xx] == "W":
-                                                defwins += 1
-                                                defrounds += 1
-                                            else:
-                                                defrounds += 1
-                                        except:
-                                            break
-                                        try:
-                                            if value[2][(2*xx)+1] == "W":
-                                                attwins += 1
-                                                attrounds += 1
-                                            else:
-                                                attrounds += 1
-                                        except:
-                                            break
-                            else:
-                                value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
-                            roundStats[z][1] += len(value[0])+attrounds
-                            roundStats[z][2] += value[0].count("W")+attwins
-                            roundStats[z][3] += len(value[1])+defrounds
-                            roundStats[z][4] += value[1].count("W")+defwins
-                            roundStats[z][5] += 1
-                            mapNew = False
-                            break
-                        else:
-                            mapNew = True
-                    if mapNew == True:
+            try:
+                if data[x][0] == maps[y]:
+                    if len(roundStats) == 0:
                         if len(data[x][4]) > 24:
                             value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
                             for z in range(len(value[2])):
@@ -706,11 +605,113 @@ async def rounds(ctx, arg1=None):
                         else:
                             value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
                             if data[x][3] == "A":
+                                print(type(str({})) + " | " + str({}) + "\n" + type(str({})) + " | " + str({}) + "\n" + type(str({})) + " | " + str({}) + "\n" + type(str({})) + " | " + str({}) + "\n", format(maps[y], len(value[0]), value[0].count("W"), len(value[1]), value[1].count("W")))
                                 roundStats.append([maps[y], len(value[0]), value[0].count("W"), len(value[1]), value[1].count("W"), 1])
                             elif data[x][3] == "D":
                                 roundStats.append([maps[y], len(value[1]), value[1].count("W"), len(value[0]), value[0].count("W"), 1])
-            #except:
-                #pass
+
+                    else:
+                        mapNew = False
+                        for z in range(len(roundStats)):
+                            if roundStats[z][0] == maps[y]:
+                                if len(data[x][4]) > 24:
+                                    value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
+                                    for xx in range(len(value[2])):
+                                        if data[x][3] == "A":
+                                            try:
+                                                if value[2][2*xx] == "W":
+                                                    attwins += 1
+                                                    attrounds += 1
+                                                else:
+                                                    attrounds += 1
+                                            except:
+                                                break
+                                            try:
+                                                if value[2][(2*xx)+1] == "W":
+                                                    defwins += 1
+                                                    defrounds += 1
+                                                else:
+                                                    defrounds += 1
+                                            except:
+                                                break
+                                        elif data[x][3] == "D":
+                                            try:
+                                                if value[2][2*xx] == "W":
+                                                    defwins += 1
+                                                    defrounds += 1
+                                                else:
+                                                    defrounds += 1
+                                            except:
+                                                break
+                                            try:
+                                                if value[2][(2*xx)+1] == "W":
+                                                    attwins += 1
+                                                    attrounds += 1
+                                                else:
+                                                    attrounds += 1
+                                            except:
+                                                break
+                                else:
+                                    value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
+                                roundStats[z][1] += len(value[0])+attrounds
+                                roundStats[z][2] += value[0].count("W")+attwins
+                                roundStats[z][3] += len(value[1])+defrounds
+                                roundStats[z][4] += value[1].count("W")+defwins
+                                roundStats[z][5] += 1
+                                mapNew = False
+                                break
+                            else:
+                                mapNew = True
+                        if mapNew == True:
+                            if len(data[x][4]) > 24:
+                                value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
+                                for z in range(len(value[2])):
+                                    if data[x][3] == "A":
+                                        try:
+                                            if value[2][2*z] == "W":
+                                                attwins += 1
+                                                attrounds += 1
+                                            else:
+                                                attrounds += 1
+                                        except:
+                                            break
+                                        try:
+                                            if value[2][(2*z)+1] == "W":
+                                                defwins += 1
+                                                defrounds += 1
+                                            else:
+                                                defrounds += 1
+                                        except:
+                                            break
+                                    elif data[x][3] == "D":
+                                        try:
+                                            if value[2][2*z] == "W":
+                                                defwins += 1
+                                                defrounds += 1
+                                            else:
+                                                defrounds += 1
+                                        except:
+                                            break
+                                        try:
+                                            if value[2][(2*z)+1] == "W":
+                                                attwins += 1
+                                                attrounds += 1
+                                            else:
+                                                attrounds += 1
+                                        except:
+                                            break
+                                if data[x][3] == "A":
+                                    roundStats.append([maps[y], len(value[0])+attrounds, value[0].count("W")+attwins, len(value[1])+defrounds, value[1].count("W")+defwins, 1])
+                                elif data[x][3] == "D":
+                                    roundStats.append([maps[y], len(value[1])+attrounds, value[1].count("W")+attwins, len(value[0])+defrounds, value[0].count("W")+defwins, 1])
+                            else:
+                                value = [data[x][4][i:i+12] for i in range(0, len(data[x][4]), 12)]
+                                if data[x][3] == "A":
+                                    roundStats.append([maps[y], len(value[0]), value[0].count("W"), len(value[1]), value[1].count("W"), 1])
+                                elif data[x][3] == "D":
+                                    roundStats.append([maps[y], len(value[1]), value[1].count("W"), len(value[0]), value[0].count("W"), 1])
+            except:
+                pass
     if arg1 == None:
         roundStats = sorted(roundStats, key=itemgetter(5), reverse=True)
     elif arg1.lower() == "--attwin%":
@@ -725,8 +726,11 @@ async def rounds(ctx, arg1=None):
 
 @client.command()
 async def verify(ctx):
+    info = sh.get_worksheet(0)
+
     worksheet = sh.get_worksheet(1)
     data = worksheet.get("C2:F")
+    
 
     allFine = True
     wrongGames = []
@@ -740,6 +744,12 @@ async def verify(ctx):
         await ctx.send("All games are fine.")
     else:
         await ctx.send("These rows of games aren't correct: " + str(wrongGames))
+    biggest_player_width = 0
+    for x in range(len(players)):
+        if getCustomWidth(players[x][0]) > biggest_player_width:
+            biggest_player_width = getCustomWidth(players[x][0])
+    for x in range(len(players)):
+        info.update_cell(3+x, 4, ("%.0f" % (round((biggest_player_width-getCustomWidth(players[x][0])) / 3, 0))))
 
 @client.command()
 async def voting(ctx):
@@ -748,48 +758,48 @@ async def voting(ctx):
     for x in  range(len(emoji)):
         await message.add_reaction(emoji[x])
 
-def getCountry(agent):
-    if agent.upper() == "PX" or agent.capitalize() == "Phoenix":
+def getCountry(item):
+    if item.upper() == "PX" or item.capitalize() == "Phoenix":
         return ":flag_gb:"
-    elif agent.upper() == "JT" or agent.capitalize() == "Jett":
+    elif item.upper() == "JT" or item.capitalize() == "Jett":
         return ":flag_kr:"
-    elif agent.upper() == "SA" or agent.capitalize() == "Sage":
+    elif item.upper() == "SA" or item.capitalize() == "Sage":
         return ":flag_cn:"
-    elif agent.upper() == "SV" or agent.capitalize() == "Sova":
+    elif item.upper() == "SV" or item.capitalize() == "Sova":
         return ":flag_ru:"
-    elif agent.upper() == "BS" or agent.capitalize() == "Brimstone":
+    elif item.upper() == "BS" or item.capitalize() == "Brimstone":
         return ":flag_us:"
-    elif agent.upper() == "OM" or agent.capitalize() == "Omen":
+    elif item.upper() == "OM" or item.capitalize() == "Omen":
         return ":grey_question:"
-    elif agent.upper() == "BR" or agent.capitalize() == "Breach":
+    elif item.upper() == "BR" or item.capitalize() == "Breach":
         return ":flag_se:"
-    elif agent.upper() == "CY" or agent.capitalize() == "Cypher":
+    elif item.upper() == "CY" or item.capitalize() == "Cypher":
         return ":flag_ma:"
-    elif agent.upper() == "VI" or agent.capitalize() == "Viper":
+    elif item.upper() == "VI" or item.capitalize() == "Viper":
         return ":flag_us:"
-    elif agent.upper() == "RZ" or agent.capitalize() == "Raze":
+    elif item.upper() == "RZ" or item.capitalize() == "Raze":
         return ":flag_br:"
-    elif agent.upper() == "RY" or agent.capitalize() == "Reyna":
+    elif item.upper() == "RY" or item.capitalize() == "Reyna":
         return ":flag_mx:"
-    elif agent.upper() == "KJ" or agent.capitalize() == "Killjoy":
+    elif item.upper() == "KJ" or item.capitalize() == "Killjoy":
         return ":flag_de:"
-    elif agent.upper() == "SK" or agent.capitalize() == "Skye":
+    elif item.upper() == "SK" or item.capitalize() == "Skye":
         return ":flag_au:"
-    elif agent.upper() == "YO" or agent.capitalize() == "Yoru":
+    elif item.upper() == "YO" or item.capitalize() == "Yoru":
         return ":flag_jp:"
-    elif agent.upper() == "AS" or agent.capitalize() == "Astra":
+    elif item.upper() == "AS" or item.capitalize() == "Astra":
         return ":flag_gh:"
-    elif agent.lower() == "bind":
+    elif item.lower() == "bind":
         return ":flag_ma:"
-    elif agent.lower() == "haven":
+    elif item.lower() == "haven":
         return ":flag_bt:"
-    elif agent.lower() == "split":
+    elif item.lower() == "split":
         return ":flag_jp:"
-    elif agent.lower() == "ascent":
+    elif item.lower() == "ascent":
         return ":flag_it:"
-    elif agent.lower() == "icebox":
+    elif item.lower() == "icebox":
         return ":flag_ru:"
-    elif agent.lower() == "breeze":
+    elif item.lower() == "breeze":
         return ":flag_tt:"
 
 def agentFullName(agent):
@@ -818,55 +828,107 @@ def agentFullName(agent):
     elif agent.upper() == "KJ":
         return "Killjoy"
     elif agent.upper() == "SK":
-        return "skye"
+        return "Skye"
     elif agent.upper() == "YO":
         return "Yoru"
     elif agent.upper() == "AS":
         return "Astra"
     
-def getCapsGap(agent):
-    if agent.upper() == "PX" or agent.capitalize() == "Phoenix":
+def agentShortName(agent):
+    if agent.upper() == "PX" or agent.upper() == "PHOENIX":
+        return "PX"
+    elif agent.upper() == "JT" or agent.upper() == "JETT":
+        return "JT"
+    elif agent.upper() == "SA" or agent.upper() == "SAGE":
+        return "SA"
+    elif agent.upper() == "SV" or agent.upper() == "SOVA":
+        return "SV"
+    elif agent.upper() == "BS" or agent.upper() == "BRIMSTONE":
+        return "BS"
+    elif agent.upper() == "OM" or agent.upper() == "OMEN":
+        return "OM"
+    elif agent.upper() == "BR" or agent.upper() == "BREACH":
+        return "BR"
+    elif agent.upper() == "CY" or agent.upper() == "CYPHER":
+        return "CY"
+    elif agent.upper() == "VI" or agent.upper() == "VIPER":
+        return "VI"
+    elif agent.upper() == "RZ" or agent.upper() == "RAZE":
+        return "RZ"
+    elif agent.upper() == "RY" or agent.upper() == "REYNA":
+        return "RY"
+    elif agent.upper() == "KJ" or agent.upper() == "KILLJOY":
+        return "KJ"
+    elif agent.upper() == "SK" or agent.upper() == "SKYE":
+        return "SK"
+    elif agent.upper() == "YO" or agent.upper() == "YORU":
+        return "YO"
+    elif agent.upper() == "AS" or agent.upper() == "ASTRA":
+        return "AS"
+
+def getCapsGap(item):
+    if item.upper() == "PX" or item.capitalize() == "Phoenix":
         return "         "
-    elif agent.upper() == "JT" or agent.capitalize() == "Jett":
+    elif item.upper() == "JT" or item.capitalize() == "Jett":
         return "                  "
-    elif agent.upper() == "SA" or agent.capitalize() == "Sage":
+    elif item.upper() == "SA" or item.capitalize() == "Sage":
         return "                 "
-    elif agent.upper() == "SV" or agent.capitalize() == "Sova":
+    elif item.upper() == "SV" or item.capitalize() == "Sova":
         return "                "
-    elif agent.upper() == "BS" or agent.capitalize() == "Brimstone":
+    elif item.upper() == "BS" or item.capitalize() == "Brimstone":
         return "   "
-    elif agent.upper() == "OM" or agent.capitalize() == "Omen":
+    elif item.upper() == "OM" or item.capitalize() == "Omen":
         return "               "
-    elif agent.upper() == "BR" or agent.capitalize() == "Breach":
+    elif item.upper() == "BR" or item.capitalize() == "Breach":
         return "           "
-    elif agent.upper() == "CY" or agent.capitalize() == "Cypher":
+    elif item.upper() == "CY" or item.capitalize() == "Cypher":
         return "           "
-    elif agent.upper() == "VI" or agent.capitalize() == "Viper":
+    elif item.upper() == "VI" or item.capitalize() == "Viper":
         return "                "
-    elif agent.upper() == "RZ" or agent.capitalize() == "Raze":
+    elif item.upper() == "RZ" or item.capitalize() == "Raze":
         return "                 "
-    elif agent.upper() == "RY" or agent.capitalize() == "Reyna":
+    elif item.upper() == "RY" or item.capitalize() == "Reyna":
         return "             "
-    elif agent.upper() == "KJ" or agent.capitalize() == "Killjoy":
+    elif item.upper() == "KJ" or item.capitalize() == "Killjoy":
         return "           "
-    elif agent.upper() == "SK" or agent.capitalize() == "Skye":
+    elif item.upper() == "SK" or item.capitalize() == "Skye":
         return "                 "
-    elif agent.upper() == "YO" or agent.capitalize() == "Yoru":
+    elif item.upper() == "YO" or item.capitalize() == "Yoru":
         return "                "
-    elif agent.upper() == "AS" or agent.capitalize() == "Astra":
+    elif item.upper() == "AS" or item.capitalize() == "Astra":
         return "              "
-    elif agent.lower() == "bind":
+    elif item.lower() == "bind":
         return "         "
-    elif agent.lower() == "haven":
+    elif item.lower() == "haven":
         return "    "
-    elif agent.lower() == "split":
+    elif item.lower() == "split":
         return "        "
-    elif agent.lower() == "ascent":
+    elif item.lower() == "ascent":
         return "   "
-    elif agent.lower() == "icebox":
+    elif item.lower() == "icebox":
         return "    "
-    elif agent.lower() == "breeze":
+    elif item.lower() == "breeze":
         return "    "
+
+def getCustomWidth(item):
+
+    width = 0
+    widthletter = [[3, "l", " "], [4, "i", "I", "j"], [5, "r"], [6, "f", "J", "s", "t", "1"], [7, "c", "e", "L", "z", "ä"], [8, "a", "b", "B", "d", "E", "F", "h", "k", "n", "o", "p", "q", "S", "u", "v", "x", "y", "ö", "ü", "2", "3", "5", "6", "7", "9"], [9, "C", "g", "K", "P", "R", "Z", "4", "8", "0", "ß"], [10, "D", "G", "H", "N", "T", "U", "V", "X"], [11, "A", "O", "Q", "w", "Y", "Ä", "Ö", "Ü"], [12, "m"], [13, "M"], [15, "W"]]
+
+    for x in range(len(item)):
+        for y in range(len(widthletter)):
+            for z in range(len(widthletter[y])):
+                try:
+                    if item[x] == widthletter[y][z+1]:
+                        width += widthletter[y][0]
+                except:
+                    pass
+    return width
+
+def getPlayerIndex(player):
+    for x in range(len(players)):
+        if player == players[x][0] or player == playerfast[x]:
+            return x
 
 keep_alive()
 #run the bot
