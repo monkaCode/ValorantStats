@@ -3,6 +3,7 @@ from discord.ext import commands # to use the commands from discord.ext
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from operator import itemgetter
+from keep_alive import keep_alive
 
 settings = open(r"settings.txt", "r")
 settings_str = settings.readlines()
@@ -49,6 +50,107 @@ async def on_command_error(ctx, error):
         await ctx.send("Something went wrong, <@" + str(developerID) + ">.") # mentioned the developer in discord if something go wrong
         print(error)
 
+@client.command()
+async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=None, played_rounds=None, p1=None, p2=None, p3=None, p4=None, p5=None):
+    
+
+    worksheet = sh.get_worksheet(1)
+    error = []
+    mapExist = False
+    game_player = [p1, p2, p3, p4, p5]
+    player_str = []
+    player_submit = [[None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None]]
+    player_agent_str = []
+    try:
+        if ctx.author.id != developerID and ctx.author.id != assistantID:
+            error.append("You can't add a game. Contact **" + str(await client.fetch_user(developerID)) + "** or **" + str(await client.fetch_user(assistantID)) + "** for adding a game.")
+        for x in range(len(maps)):
+            if str(played_map.lower()) == str(maps[x].lower()):
+                mapExist = True
+                break
+        if mapExist == False:
+            error.append("The map **" + played_map.capitalize() + "** doesn't exist.")
+        try:
+            int(rw)
+            int(rl)
+        except:
+            error.append("**" + rw + "** and **" + rl + "** aren't integers.")
+        if int(rw) < 13 and int(rl) < 13:
+            error.append("The result of the game isn't valid.")
+        if int(rw) < int(rl)+2 and int(rl) < int(rw)+2:
+            error.append("The result of the game isn't valid.")
+        if int(rw) != played_rounds.upper().count("W") or int(rl) != played_rounds.upper().count("L"):
+            error.append("The result isn't the same as the rounds.")
+        if firstSide.upper() != "A" and firstSide.upper() != "D":
+            error.append("The first side must be **A** or **D**.")
+        for x in range(5):
+            try:
+                game_player[x] = game_player[x].replace("[", "").replace("]", "").split(",")
+                if len(game_player[x]) != 5:
+                    error.append("You missed some stats for the **" + str(x+1) + ".** player.")
+                    break
+                game_player[x][0] = str(game_player[x][0])
+                game_player[x][1] = str(game_player[x][1]).upper()
+                try:
+                    game_player[x][2] = int(game_player[x][2])
+                    game_player[x][3] = int(game_player[x][3])
+                    game_player[x][4] = int(game_player[x][4])
+                except:
+                    error.append("The KDA isn't valid. Use only numbers.")
+                playerFound = False
+                for y in range(len(players)):
+                    if game_player[x][0].lower() == players[y][0].lower() or game_player[x][0].lower() == playerfast[y].lower():
+                        player_str.append(players[y][0])
+                        game_player[x].append(y)
+                        playerFound = True
+                        if game_player[x][5] == y:
+                            player_submit[y] = game_player[x]
+                        break
+                    else:
+                        error_str = "The player **" + game_player[x][0] + "** isn't in the team."
+                
+                for y in range(x):
+                    try:
+                        if player_str[x] == player_str[y]:
+                            error_str = "The player **" + game_player[x][0] + "** already exists in this game."
+                            playerFound = False
+                            break
+                    except:
+                        pass
+                if playerFound == False:
+                    error.append(error_str)
+
+                agentFound = False
+                for y in range(len(agents)):
+                    if game_player[x][1].lower() == agents[y].lower() or game_player[x][1].lower() == agents_full[y].lower():
+                        player_agent_str.append(agents_full[y])
+                        agentFound = True
+                        break
+                    else:
+                        error_str = "The agent **" + game_player[x][1] + "** doesn't exist."
+
+                for y in range(x):
+                    try:
+                        if player_agent_str[x] == player_agent_str[y]:
+                            error_str = "**" + player_str[y] + "** already plays **" + player_agent_str[x] + "**."
+                            agentFound = False
+                            break
+                    except:
+                        pass
+                if agentFound == False:
+                    error.append(error_str)
+            except:
+                pass
+    except:
+        pass
+    if len(error) != 0:
+        await ctx.send("There are **" + str(len(error)) + "** errors. The first one is:\n" + error[0])
+    else:
+        worksheet.append_row([date, played_map.capitalize(), int(rw), int(rl), firstSide.upper(), played_rounds.upper(), player_submit[0][1], player_submit[0][2], player_submit[0][3], player_submit[0][4], player_submit[1][1], player_submit[1][2], player_submit[1][3], player_submit[1][4], player_submit[2][1], player_submit[2][2], player_submit[2][3], player_submit[2][4], player_submit[3][1], player_submit[3][2], player_submit[3][3], player_submit[3][4], player_submit[4][1], player_submit[4][2], player_submit[4][3], player_submit[4][4], player_submit[5][1], player_submit[5][2], player_submit[5][3], player_submit[5][4], player_submit[6][1], player_submit[6][2], player_submit[6][3], player_submit[6][4], player_submit[7][1], player_submit[7][2], player_submit[7][3], player_submit[7][4], player_submit[8][1], player_submit[8][2], player_submit[8][3], player_submit[8][4], player_submit[9][1], player_submit[9][2], player_submit[9][3], player_submit[9][4]])
+        stats = ""
+        for x in range(len(player_str)):
+            stats += getCountry(player_agent_str[x]) + " **" + player_agent_str[x].upper() + "**" + getCapsGap(player_agent_str[x]) + "**" + player_str[x] + "**   |   **KDA:** " + str(game_player[x][2]) + " / " + str(game_player[x][3]) + " / " + str(game_player[x][4]) + "\n"
+        await ctx.send("Created the game with following attributes!\n**Date:** " + date + "\n**Map:** " + played_map.capitalize() + "   |   **First Round Site:** " + firstSide.upper() + "\n**Result:** " + rw + " : " + rl + "\n\nPlayer specific stats:\n" + stats)
 @client.command()
 async def game(ctx, arg1=None):
 
@@ -188,7 +290,6 @@ async def game(ctx, arg1=None):
                 await ctx.send("[**" + str(arg1) + "**] Date: **" + str(data[x][0]) + "**   |   Map: **" + data[x][1] + "**\nResult: **" + str(data[x][2]) + "** - **" + str(data[x][3]) + "**\n\n" + desc_round_str + "\n" + your_round_str + "\n" + enemy_round_str + "\n.")
                 await ctx.send(player_stats_str)
         
-
 @client.command()
 async def map(ctx, arg1=None, arg2=None):
     worksheet = sh.get_worksheet(1)
@@ -767,4 +868,6 @@ def getCapsGap(agent):
     elif agent.lower() == "breeze":
         return "    "
 
+keep_alive()
+#run the bot
 client.run(token)
