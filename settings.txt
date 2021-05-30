@@ -13,4 +13,6 @@ Player 8:
 Player 9:
 Player 10:
 
-Google Sheets Key: ?
+Google Sheets Key: 
+
+Discord Bot Prefix: ?
