@@ -7,7 +7,7 @@ from keep_alive import keep_alive
 
 settings = open(r"settings.txt", "r")
 settings_str = settings.readlines()
-gsk = settings_str[15].replace("Google Sheets Key: ", "")
+gsk = settings_str[15].replace("Google Sheets Key: ", "").replace("\n", "")
 
 gc = gspread.service_account(filename=r"credentials.json")
 sh = gc.open_by_key(gsk)
@@ -25,7 +25,7 @@ developerID = int(settings_str[0].replace("DeveloperID: ", "")) # discrod ID of 
 assistantID = int(settings_str[1].replace("AssistantID: ", "")) # discord ID of the person who can also add games
 
 # set a bot prefix
-client = commands.Bot(command_prefix='?', help_command=None)
+client = commands.Bot(command_prefix=settings_str[17].replace("Discord Bot Prefix: ", "").replace("\n", ""), help_command=None)
 
 # import the token from a extern file for security
 tokenTxt = open(r"token.txt", "r")
