@@ -7,8 +7,8 @@ from keep_alive import keep_alive
 
 settings = open(r"settings.txt", "r")
 settings_str = settings.readlines()
-gsk = settings_str[15].replace("Google Sheets Key: ", "").replace("\n", "")
 
+gsk = settings_str[15].replace("Google Sheets Key: ", "").replace("\n", "")
 gc = gspread.service_account(filename=r"credentials.json")
 sh = gc.open_by_key(gsk)
 
@@ -18,8 +18,10 @@ playerwidth = sh.get_worksheet(0).get("D3:D12")
 
 agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra"]
+agentFlag = [":flag_gb:", ":flag_kr:", ":flag_cn:", ":flag_ru:", ":flag_us:", ":grey_question:", ":flag_se:", ":flag_ma:", ":flag_us:", ":flag_br:", ":flag_mx:", ":flag_de:", ":flag_au:", ":flag_jp:", ":flag_gh:"]
 
 maps = ["Bind", "Haven", "Split", "Ascent", "Icebox", "Breeze"]
+mapFlag = [":flag_ma:", ":flag_bt:", ":flag_jp:", ":flag_it:", ":flag_ru:", ":flag_tt:"]
 
 developerID = int(settings_str[0].replace("DeveloperID: ", "")) # discrod ID of the developer
 assistantID = int(settings_str[1].replace("AssistantID: ", "")) # discord ID of the person who can also add games
@@ -759,156 +761,46 @@ async def voting(ctx):
         await message.add_reaction(emoji[x])
 
 def getCountry(item):
-    if item.upper() == "PX" or item.capitalize() == "Phoenix":
-        return ":flag_gb:"
-    elif item.upper() == "JT" or item.capitalize() == "Jett":
-        return ":flag_kr:"
-    elif item.upper() == "SA" or item.capitalize() == "Sage":
-        return ":flag_cn:"
-    elif item.upper() == "SV" or item.capitalize() == "Sova":
-        return ":flag_ru:"
-    elif item.upper() == "BS" or item.capitalize() == "Brimstone":
-        return ":flag_us:"
-    elif item.upper() == "OM" or item.capitalize() == "Omen":
-        return ":grey_question:"
-    elif item.upper() == "BR" or item.capitalize() == "Breach":
-        return ":flag_se:"
-    elif item.upper() == "CY" or item.capitalize() == "Cypher":
-        return ":flag_ma:"
-    elif item.upper() == "VI" or item.capitalize() == "Viper":
-        return ":flag_us:"
-    elif item.upper() == "RZ" or item.capitalize() == "Raze":
-        return ":flag_br:"
-    elif item.upper() == "RY" or item.capitalize() == "Reyna":
-        return ":flag_mx:"
-    elif item.upper() == "KJ" or item.capitalize() == "Killjoy":
-        return ":flag_de:"
-    elif item.upper() == "SK" or item.capitalize() == "Skye":
-        return ":flag_au:"
-    elif item.upper() == "YO" or item.capitalize() == "Yoru":
-        return ":flag_jp:"
-    elif item.upper() == "AS" or item.capitalize() == "Astra":
-        return ":flag_gh:"
-    elif item.lower() == "bind":
-        return ":flag_ma:"
-    elif item.lower() == "haven":
-        return ":flag_bt:"
-    elif item.lower() == "split":
-        return ":flag_jp:"
-    elif item.lower() == "ascent":
-        return ":flag_it:"
-    elif item.lower() == "icebox":
-        return ":flag_ru:"
-    elif item.lower() == "breeze":
-        return ":flag_tt:"
+    for x in range(len(agents)):
+        if item.upper() == agents[x] or item.capitalize() == agents_full[x]:
+            return agentFlag[x]
+    for x in range(len(maps)):
+        if item.capitalize() == maps[x]:
+            return mapFlag[x]
 
 def agentFullName(agent):
-    if agent.upper() == "PX":
-        return "Phoenix"
-    elif agent.upper() == "JT":
-        return "Jett"
-    elif agent.upper() == "SA":
-        return "Sage"
-    elif agent.upper() == "SV":
-        return "Sova"
-    elif agent.upper() == "BS":
-        return "Brimstone"
-    elif agent.upper() == "OM":
-        return "Omen"
-    elif agent.upper() == "BR":
-        return "Breach"
-    elif agent.upper() == "CY":
-        return "Cypher"
-    elif agent.upper() == "VI":
-        return "Viper"
-    elif agent.upper() == "RZ":
-        return "Raze"
-    elif agent.upper() == "RY":
-        return "Reyna"
-    elif agent.upper() == "KJ":
-        return "Killjoy"
-    elif agent.upper() == "SK":
-        return "Skye"
-    elif agent.upper() == "YO":
-        return "Yoru"
-    elif agent.upper() == "AS":
-        return "Astra"
+    for x in range(len(agents)):
+        if agent.upper() == agents[x]:
+            return agents_full[x]
     
 def agentShortName(agent):
-    if agent.upper() == "PX" or agent.upper() == "PHOENIX":
-        return "PX"
-    elif agent.upper() == "JT" or agent.upper() == "JETT":
-        return "JT"
-    elif agent.upper() == "SA" or agent.upper() == "SAGE":
-        return "SA"
-    elif agent.upper() == "SV" or agent.upper() == "SOVA":
-        return "SV"
-    elif agent.upper() == "BS" or agent.upper() == "BRIMSTONE":
-        return "BS"
-    elif agent.upper() == "OM" or agent.upper() == "OMEN":
-        return "OM"
-    elif agent.upper() == "BR" or agent.upper() == "BREACH":
-        return "BR"
-    elif agent.upper() == "CY" or agent.upper() == "CYPHER":
-        return "CY"
-    elif agent.upper() == "VI" or agent.upper() == "VIPER":
-        return "VI"
-    elif agent.upper() == "RZ" or agent.upper() == "RAZE":
-        return "RZ"
-    elif agent.upper() == "RY" or agent.upper() == "REYNA":
-        return "RY"
-    elif agent.upper() == "KJ" or agent.upper() == "KILLJOY":
-        return "KJ"
-    elif agent.upper() == "SK" or agent.upper() == "SKYE":
-        return "SK"
-    elif agent.upper() == "YO" or agent.upper() == "YORU":
-        return "YO"
-    elif agent.upper() == "AS" or agent.upper() == "ASTRA":
-        return "AS"
+    for x in range(len(agents)):
+        if agent.upper() == agents[x] or agent.capitalize() == agents_full[x]:
+            return agents[x]
 
 def getCapsGap(item):
-    if item.upper() == "PX" or item.capitalize() == "Phoenix":
+    if item.upper() == "PX" or item.capitalize() == "Phoenix" or item.lower() == "bind":
         return "         "
     elif item.upper() == "JT" or item.capitalize() == "Jett":
         return "                  "
-    elif item.upper() == "SA" or item.capitalize() == "Sage":
+    elif item.upper() == "SA" or item.capitalize() == "Sage" or item.upper() == "RZ" or item.capitalize() == "Raze" or item.upper() == "SK" or item.capitalize() == "Skye":
         return "                 "
-    elif item.upper() == "SV" or item.capitalize() == "Sova":
+    elif item.upper() == "SV" or item.capitalize() == "Sova" or item.upper() == "VI" or item.capitalize() == "Viper" or item.upper() == "YO" or item.capitalize() == "Yoru":
         return "                "
-    elif item.upper() == "BS" or item.capitalize() == "Brimstone":
+    elif item.upper() == "BS" or item.capitalize() == "Brimstone" or item.lower() == "ascent":
         return "   "
     elif item.upper() == "OM" or item.capitalize() == "Omen":
         return "               "
-    elif item.upper() == "BR" or item.capitalize() == "Breach":
+    elif item.upper() == "BR" or item.capitalize() == "Breach" or item.upper() == "CY" or item.capitalize() == "Cypher" or item.upper() == "KJ" or item.capitalize() == "Killjoy":
         return "           "
-    elif item.upper() == "CY" or item.capitalize() == "Cypher":
-        return "           "
-    elif item.upper() == "VI" or item.capitalize() == "Viper":
-        return "                "
-    elif item.upper() == "RZ" or item.capitalize() == "Raze":
-        return "                 "
     elif item.upper() == "RY" or item.capitalize() == "Reyna":
         return "             "
-    elif item.upper() == "KJ" or item.capitalize() == "Killjoy":
-        return "           "
-    elif item.upper() == "SK" or item.capitalize() == "Skye":
-        return "                 "
-    elif item.upper() == "YO" or item.capitalize() == "Yoru":
-        return "                "
     elif item.upper() == "AS" or item.capitalize() == "Astra":
         return "              "
-    elif item.lower() == "bind":
-        return "         "
-    elif item.lower() == "haven":
+    elif item.lower() == "haven" or item.lower() == "icebox" or item.lower() == "breeze":
         return "    "
     elif item.lower() == "split":
         return "        "
-    elif item.lower() == "ascent":
-        return "   "
-    elif item.lower() == "icebox":
-        return "    "
-    elif item.lower() == "breeze":
-        return "    "
 
 def getCustomWidth(item):
 
