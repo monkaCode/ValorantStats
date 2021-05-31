@@ -15,4 +15,4 @@ Then you can edit the player names in the first Sheet of the Spreadsheet (Info).
 Thats was it for setting the Google Spreadsheet up. Now you can manually type in the stats into the Sheet called TEAM and you get the statistics automatically in the Sheet called Stats.
 
 ## How to install the Discord Bot to get access to your data from Google Sheets
-View <a href="https://www.youtube.com/watch?v=T1vqS1NL89E&list=LL&index=4&t=501s">this video</a> to see how to set up your ValorantStats Bot.
+View <a href="https://youtu.be/mYsGgcFFwgA">this video</a> to see how to set up your ValorantStats Bot.
