@@ -9,7 +9,7 @@ A Google Sheets based tracking system, to store much of information from your VA
 </p>
 
 ## How to begin
-First of all you must make a copy of this <a href="https://docs.google.com/spreadsheets/d/1bBiP2sJCfDunpmltgzfUQZHF_MUTSKWqZ5-T6cqKUCs/edit?usp=sharing">Google Sheets Document</a>.
+First of all you must make a copy of this <a href="https://docs.google.com/spreadsheets/d/1vpNyLf-vzPHh88zD2xacgQFGOTUvunAH3pKrY9RcR6Y/edit?usp=sharing">Google Sheets Document</a>.
 Then you can edit the player names in the first Sheet of the Spreadsheet (Info). Just write the names from your team into the cells Info!C3:C12.
 
 Thats was it for setting the Google Spreadsheet up. Now you can manually type in the stats into the Sheet called TEAM and you get the statistics automatically in the Sheet called Stats.
