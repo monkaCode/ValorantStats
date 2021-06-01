@@ -156,6 +156,13 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
         await ctx.send("Created the game with following attributes!\nDate: **" + date + "**\nMap: **" + played_map.capitalize() + "**   |   First Round Site: **" + firstSide.upper() + "**\nResult: **" + rw + "** - **" + rl + "**\n\nPlayer specific stats:\n" + stats)
 
 @client.command()
+async def agents(ctx):
+    string = ""
+    for x in range(len(agents)):
+        string += agentFlag[x] + "[**" + agents[x] + "**] **" + agents_full[x] + "**\n"
+    await ctx.send(string)
+
+@client.command()
 async def game(ctx, arg1=None):
 
     worksheet = sh.get_worksheet(1)
