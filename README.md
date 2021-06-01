@@ -15,8 +15,8 @@ Watch <a href="https://youtu.be/mYsGgcFFwgA">this video</a>.
 
 ### ?player
 ?player                                   -> Overall player stats for all players in your team sorted descending by the amount of games
-?player <sort-algorithm>                  -> Overall player stats for all players in your team sorted by a sort-algorithm
-?player <name> <sort-algorithm>           -> Specific player stats about the <name>
+?player (sort-algorithm)                  -> Overall player stats for all players in your team sorted by a sort-algorithm
+?player (name) (sort-algorithm)           -> Specific player stats about the <name>
  
 Example: ?player ScreaM --kd
 
@@ -31,7 +31,7 @@ If you don't use a sort-algorith then the default is sorted descending to the am
   
 ### ?map
 ?map                                    -> Map stats for all maps sorted descending to the amount of games
-?map <sort-algorithm>                   -> Map stats for all maps sorted to the sort-algorithm
+?map (sort-algorithm)                   -> Map stats for all maps sorted to the sort-algorithm
 
 Example: ?map --win%
  
@@ -44,7 +44,7 @@ If you don't use a sort-algorithm then the default is sorted descending to the a
   
 ### ?rounds
 ?rounds                         -> Attacker and Defender winrate sorted descending to the amount of games
-?rounds <sort-algorithm>        -> Attacker and Defender winrate sorted to the sort-algorithm
+?rounds <<sort-algorithm>>        -> Attacker and Defender winrate sorted to the sort-algorithm
 
 Example: ?rounds --attwin%
 
