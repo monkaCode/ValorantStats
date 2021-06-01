@@ -5,6 +5,7 @@ A Google Sheets based tracking system, to store much of information from your VA
   </a>
   <a href="https://twitter.com/liiquidsilver"><img src="https://img.shields.io/badge/Twitter-@LiiquidSilver-1da1f2.svg?logo=twitter?style=for-the-badge&logo=appveyor"></a>
   <a href="https://www.twitch.tv/monkaaaaaaa"><img src="https://img.shields.io/badge/Twitch-monkaaaaaaa-blueviolet"></a>
+  <a href="https://discord.gg/kgYhPXzvEX"><img src="https://img.shields.io/badge/Discord-ValorantStats-blue"></a>
   
 </p>
 
