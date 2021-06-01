@@ -115,4 +115,4 @@ All agents shortcut:
 | AS       | Astra            |
 
 ## General information
-In general you can use for <name> the ingame name or the shortcut you set in settings.txt
+In general you can use for `<name>` the ingame name or the shortcut you set in settings.txt
