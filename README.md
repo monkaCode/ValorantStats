@@ -116,5 +116,10 @@ All agents shortcut:
 | YO       | Yoru             |
 | AS       | Astra            |
 
+### ?voting
+```
+?voting        -> Create a voting on that your team can vote when your team is ready to play
+```
+
 ## General information
 In general you can use for `<name>` the ingame name or the shortcut you set in settings.txt
