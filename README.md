@@ -9,7 +9,7 @@ A Google Sheets based tracking system, to store much of information from your VA
 </p>
 
 ## How to install the Discord Bot
-Watch <a href="https://youtu.be/mYsGgcFFwgA">this video</a>.
+Watch [this video](https://youtu.be/mYsGgcFFwgA "ValorantStats - Discord Bot Setup").
 
 ## All commands
 
