@@ -16,3 +16,6 @@ Player 10:
 Google Sheets Key: 
 
 Discord Bot Prefix: ?
+
+Voting command message: "@everyone Can you play today and if so when?"
+Voting clock reactions: clock7,clock730,clock8,clock830,clock9

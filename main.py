@@ -762,8 +762,16 @@ async def verify(ctx):
 
 @client.command()
 async def voting(ctx):
-    message = await ctx.send("@everyone Könnt ihr heute oder nicht, und wenn ja wann, bitte reagieren:\n:white_check_mark: Ich bin da\n:x: Ich bin nicht da\n\n:clock7: 19.00 Uhr\n:clock730: 19.30 Uhr\n:clock8: 20.00 Uhr\n:clock830: 20.30 Uhr\n:clock9: 21.00 Uhr")
-    emoji = ["✅", "❌", "🕖", "🕢", "🕗", "🕣", "🕘"]
+
+    voting_msg = settings_str[19].replace("Voting command message: ", "").replace("\n", "").replace('"', "")
+    voting_clock = settings_str[20].replace("Voting clock reactions: ", "").replace("\n", "").split(",")
+    clocks = [["🕐", "clock1"], ["🕑", "clock2"], ["🕒", "clock3"], ["🕓", "clock4"], ["🕔", "clock5"], ["🕕", "clock6"], ["🕖", "clock7"], ["🕗", "clock8"], ["🕘", "clock9"], ["🕙", "clock10"], ["🕚", "clock11"], ["🕛", "clock12"], ["🕜", "clock130"], ["🕝", "clock230"], ["🕞", "clock330"], ["🕟", "clock430"], ["🕠", "clock530"], ["🕡", "clock630"], ["🕢", "clock730"], ["🕣", "clock830"], ["🕤", "clock930"], ["🕥", "clock1030"], ["🕦", "clock1130"], ["🕧", "clock1230"]]
+    message = await ctx.send(voting_msg)
+    emoji = ["✅", "❌"]
+    for x in range(len(voting_clock)):
+        for y in range(len(clocks)):
+            if voting_clock[x] == clocks[y][1]:
+                emoji.append(clocks[y][0])
     for x in  range(len(emoji)):
         await message.add_reaction(emoji[x])
 
