@@ -58,7 +58,7 @@ If you don't use a sort-algorithm then the default is sorted descending to the a
 ?game (game-id)         -> Show all information about an specific game with the ID (ID = Row in Google Sheets)<br/>
 
 ### ?addgame
-?addgame <date> <map> <round-wins> <round-losses> <first-side> <rounds> {player1} {player2} {player3} {player4} {player5}<br/>
+?addgame (date) (map) (round-wins) (round-losses) (first-side) (rounds) {player1} {player2} {player3} {player4} {player5}<br/>
 <br/>
 (date)          -> Whatever you want but i prefer your date format e.g. 01.06.2021 or 06/01/2021<br/>
 (map)           -> The played map e.g. Icebox or Haven<br/>
