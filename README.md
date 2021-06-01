@@ -44,7 +44,7 @@ If you don't use a sort-algorithm then the default is sorted descending to the a
   <br/>
 ### ?rounds
 ?rounds                         -> Attacker and Defender winrate sorted descending to the amount of games<br/>
-?rounds <<sort-algorithm>>        -> Attacker and Defender winrate sorted to the sort-algorithm<br/>
+?rounds (sort-algorithm)        -> Attacker and Defender winrate sorted to the sort-algorithm<br/>
 <br/>
 Example: ?rounds --attwin%<br/>
 <br/>
@@ -55,17 +55,17 @@ If you don't use a sort-algorithm then the default is sorted descending to the a
 <br/>
 ### ?game
 ?game                   -> Show all information about the last submitted game<br/>
-?game <game-id>         -> Show all information about an specific game with the ID (ID = Row in Google Sheets)<br/>
+?game (game-id)         -> Show all information about an specific game with the ID (ID = Row in Google Sheets)<br/>
 
 ### ?addgame
 ?addgame <date> <map> <round-wins> <round-losses> <first-side> <rounds> {player1} {player2} {player3} {player4} {player5}<br/>
 <br/>
-<date>          -> Whatever you want but i prefer your date format e.g. 01.06.2021 or 06/01/2021<br/>
-<map>           -> The played map e.g. Icebox or Haven<br/>
-<round-wins>    -> The amount of rounds you've won<br/>
-<round-losses>  -> The amount of rounds you've loss<br/>
-<first-side>    -> The side you started from e.g. A for Attacker or D for Defender<br/>
-<rounds>        -> If you win 13 - 1 and loss the third round then you type in WWLWWWWWWWWWWW (each letter is a round, if you won this round you type W and when you loss you type L)<br/>
+(date)          -> Whatever you want but i prefer your date format e.g. 01.06.2021 or 06/01/2021<br/>
+(map)           -> The played map e.g. Icebox or Haven<br/>
+(round-wins)    -> The amount of rounds you've won<br/>
+(round-losses)  -> The amount of rounds you've loss<br/>
+(first-side)    -> The side you started from e.g. A for Attacker or D for Defender<br/>
+(rounds)        -> If you win 13 - 1 and loss the third round then you type in WWLWWWWWWWWWWW (each letter is a round, if you won this round you type W and when you loss you type L)<br/>
 {player1-5}     -> You don't need this option but it's very recommended at least to add 3 or more player to a game. The format for this option are [<name>,<agent>,<kills>,<deaths>,<assists>] you can also don't use these [ ] but it's more clear. For the name type in the ingame name or the shortcut you set in the settings.txt file. For the agent you type in the whole name of the agent or use the shortcut (all shortcut for agents you can see with the "?agents" command)<br/>
 <br/>
 All agents shortcut: PX -> Phoenix<br/>
