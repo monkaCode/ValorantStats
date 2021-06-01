@@ -8,11 +8,81 @@ A Google Sheets based tracking system, to store much of information from your VA
   
 </p>
 
-## How to begin
-First of all you must make a copy of this <a href="https://docs.google.com/spreadsheets/d/1vpNyLf-vzPHh88zD2xacgQFGOTUvunAH3pKrY9RcR6Y/edit?usp=sharing">Google Sheets Document</a>.
-Then you can edit the player names in the first Sheet of the Spreadsheet (Info). Just write the names from your team into the cells Info!C3:C12.
+## How to install the Discord Bot
+Watch <a href="https://youtu.be/mYsGgcFFwgA">this video</a>.
 
-Thats was it for setting the Google Spreadsheet up. Now you can manually type in the stats into the Sheet called Stats or go on and show this video down below.
+## All commands
 
-## How to install the Discord Bot to get access to your data from Google Sheets
-Watch <a href="https://youtu.be/mYsGgcFFwgA">this video</a>. 
+### ?player
+?player                                   -> Overall player stats for all players in your team sorted descending by the amount of games
+?player <sort-algorithm>                  -> Overall player stats for all players in your team sorted by a sort-algorithm
+?player <name> <sort-algorithm>           -> Specific player stats about the <name>
+ 
+Example: ?player ScreaM --kd
+
+All sort values:  --kd            -> sort descending to the K/D
+                  --kda           -> sort descending to the K+A/D
+                  --win%          -> sort descending to the winrate on agents and maps
+                  --kills         -> sort descending to the average kills
+                  --deaths        -> sort descending to the average deaths
+                  --assists       -> sort descending to the average assists
+
+If you don't use a sort-algorith then the default is sorted descending to the amount of games.
+  
+### ?map
+?map                                    -> Map stats for all maps sorted descending to the amount of games
+?map <sort-algorithm>                   -> Map stats for all maps sorted to the sort-algorithm
+
+Example: ?map --win%
+ 
+All sort values:  --win%        -> sort descending to the winrate
+                  --wins        -> sort descending to the amount of wins
+                  --losses      -> sort descending to the amount of losses
+                  --draws       -> sort descending to the amount of draws
+  
+If you don't use a sort-algorithm then the default is sorted descending to the amount of games.
+  
+### ?rounds
+?rounds                         -> Attacker and Defender winrate sorted descending to the amount of games
+?rounds <sort-algorithm>        -> Attacker and Defender winrate sorted to the sort-algorithm
+
+Example: ?rounds --attwin%
+
+All sort values:  --attwin%     -> sort descending to the Attacker winrate
+                  --defwin%     -> sort descending to the Defender winrate
+
+If you don't use a sort-algorithm then the default is sorted descending to the ammount of games.
+
+### ?game
+?game                   -> Show all information about the last submitted game
+?game <game-id>         -> Show all information about an specific game with the ID (ID = Row in Google Sheets)
+
+### ?addgame
+?addgame <date> <map> <round-wins> <round-losses> <first-side> <rounds> {player1} {player2} {player3} {player4} {player5}
+
+<date>          -> Whatever you want but i prefer your date format e.g. 01.06.2021 or 06/01/2021
+<map>           -> The played map e.g. Icebox or Haven
+<round-wins>    -> The amount of rounds you've won
+<round-losses>  -> The amount of rounds you've loss
+<first-side>    -> The side you started from e.g. A for Attacker or D for Defender
+<rounds>        -> If you win 13 - 1 and loss the third round then you type in WWLWWWWWWWWWWW (each letter is a round, if you won this round you type W and when you loss you type L)
+{player1-5}     -> You don't need this option but it's very recommended at least to add 3 or more player to a game. The format for this option are [<name>,<agent>,<kills>,<deaths>,<assists>] you can also don't use these [ ] but it's more clear. For the name type in the ingame name or the shortcut you set in the settings.txt file. For the agent you type in the whole name of the agent or use the shortcut (all shortcut for agents you can see with the "?agents" command)
+
+All agents shortcut: PX -> Phoenix
+                     JT -> Jett
+                     SA -> Sage
+                     SV -> Sova
+                     BS -> Brimstone
+                     OM -> Omen
+                     BR -> Breach
+                     CY -> Cypher
+                     VI -> Viper
+                     RZ -> Raze
+                     RY -> Reyna
+                     KJ -> Killjoy
+                     SK -> Skye
+                     YO -> Yoru
+                     AS -> Astra
+
+## General information
+In general you can use for <name> the ingame name or the shortcut you set in settings.txt
