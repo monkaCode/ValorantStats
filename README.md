@@ -81,7 +81,7 @@ If you don't use a sort-algorithm then the default is sorted descending to the a
 ```
 ### ?addgame
 ```
-?addgame <date> <map> <round-wins> <round-losses> <first-side> <rounds> {player1} {player2} {player3} {player4} {player5}<br/>
+?addgame <date> <map> <round-wins> <round-losses> <first-side> <rounds> {player1} {player2} {player3} {player4} {player5}
 ```
 
 | Value           | Description                                                                                                                                      |
