@@ -92,7 +92,7 @@ If you don't use a sort-algorithm then the default is sorted descending to the a
 | round-losses    | The amount of rounds you've loss                                                                                                                 |
 | first-side      | The side you started from e.g. A for Attacker or D for Defender                                                                                  |
 | rounds          | If you win 13 - 1 and loss the third round then you type in WWLWWWWWWWWWWW (each letter is a round, if you won this round you type W and when you loss you type L) |
-| player1-5       | You don't need this option but it's very recommended at least to add 3 or more player to a game. The format for this option are [`<name>`,`<agent>`,`<kills>`,`<deaths>`,`<assists>`] you can also don't use these [ ] but it's more clear Be sure that there is no space between the commas. For the name type in the ingame name or the shortcut you set in the settings.txt file. For the agent you type in the whole name of the agent or use the shortcut (all shortcut for agents you can see with the "?agents" command) |
+| player1-5       | You don't need this option but it's very recommended at least to add 3 or more player to a game. The format for this option are [`<name>`,`<agent>`,`<kills>`,`<deaths>`,`<assists>`] you can also don't use these [ ] but it's more clear Be sure that there is no space between the commas. For the name type in the ingame name or the shortcut you set in the settings.txt file. For the agent you type in the whole name of the agent or use the shortcut (all shortcut for agents you can see with the "?agent" command) |
 
 All agents shortcut:
 
