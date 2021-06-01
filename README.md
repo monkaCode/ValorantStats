@@ -12,6 +12,8 @@ A Google Sheets based tracking system, to store much of information from your VA
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/mYsGgcFFwgA/0.jpg)](http://www.youtube.com/watch?v=mYsGgcFFwgA)<br/>
 Watch [this video](http://www.youtube.com/watch?v=mYsGgcFFwgA "ValorantStats - Discord Bot Setup") above.
 
+### Addition to the video
+In the `settings.txt` file you can choose a voting message for the ?voting command. You can also add reaction to this message with a clock emoji, but be sure it's right.
 
 ## All commands
 
