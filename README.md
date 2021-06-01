@@ -18,7 +18,6 @@ Watch <a href="https://youtu.be/mYsGgcFFwgA">this video</a>.
 ?player                          -> Overall player stats for all players in your team sorted descending by the amount of games
 ?player <sort-algorithm>         -> Overall player stats for all players in your team sorted by a sort-algorithm
 ?player <name> <sort-algorithm>  -> Specific player stats about the <name>
-
 ```
 Example: 
 ```
