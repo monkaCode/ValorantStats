@@ -159,7 +159,7 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
 async def agent(ctx):
     string = ""
     for x in range(len(agents)):
-        string += agentFlag[x] + "[**" + agents[x] + "**] **" + agents_full[x] + "**\n"
+        string += agentFlag[x] + " [**" + agents[x] + "**] **" + agents_full[x] + "**\n"
     await ctx.send(string)
 
 @client.command()
