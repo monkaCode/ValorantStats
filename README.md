@@ -123,3 +123,5 @@ All agents shortcut:
 
 ## General information
 In general you can use for `<name>` the ingame name or the shortcut you set in settings.txt
+
+❗️ **IMPORTANT**: Everytime when you change something in the `settings.txt` file or changed, replace or delete the names in the Google Sheet then you **must** restart the server on replit.com.
