@@ -80,7 +80,9 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
             error.append("**" + rw + "** and **" + rl + "** aren't integers.")
         if int(rw) < 13 and int(rl) < 13:
             error.append("The result of the game isn't valid.")
-        if int(rw) < int(rl)+2 and int(rl) < int(rw)+2:
+        if int(rw) == int(rl) and int(rw) > 12:
+            None
+        elif int(rw) < int(rl)+2 and int(rl) < int(rw)+2:
             error.append("The result of the game isn't valid.")
         if int(rw) != played_rounds.upper().count("W") or int(rl) != played_rounds.upper().count("L"):
             error.append("The result isn't the same as the rounds.")
