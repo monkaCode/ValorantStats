@@ -2,6 +2,7 @@ from os import supports_bytes_environ
 import discord # install with: pip install discord.py
 from discord.ext import commands # to use the commands from discord.ext
 import gspread
+from gspread.models import Worksheet
 from oauth2client.service_account import ServiceAccountCredentials
 from operator import itemgetter
 from keep_alive import keep_alive
@@ -242,6 +243,8 @@ async def agent(ctx, arg1=None, arg2=None):
                         pass
 
     if sort_algo == None:
+        agentStats = sorted(agentStats, key= lambda x: x[2]**3/x[1]**2, reverse=True)
+    elif sort_algo == "--games" or sort_algo == "--pick%":
         agentStats = sorted(agentStats, key=itemgetter(1), reverse=True)
     elif sort_algo == "--wins":
         agentStats = sorted(agentStats, key=itemgetter(2), reverse=True)
@@ -260,10 +263,10 @@ async def agent(ctx, arg1=None, arg2=None):
     
     stats_str = ["", ""]
     for x in range(len(agentStats)):
-        if len(stats_str[0]) > 1800:
-            stats_str[1] += getCountry(agentStats[x][0]) + " [**" + agentStats[x][0] + "**] **" + agentFullName(agentStats[x][0]).upper() + "**" + getCapsGap(agentFullName(agentStats[x][0])) + "KDA: **" + str("%.1f" % (round((agentStats[x][3]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][4]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][5]/agentStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((agentStats[x][3]/agentStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((agentStats[x][2]/agentStats[x][1]), 3)*100)) + "%**   |   Pick%: **" + str("%.1f" % (round((agentStats[x][1]/allgames), 3)*100)) + "%**   |   Games: **" + str(agentStats[x][1]) + "**\n"
+        if len(stats_str[0]) > 1700:
+            stats_str[1] += getCountry(agentStats[x][0]) + " [**" + agentStats[x][0] + "**] **" + agentFullName(agentStats[x][0]).upper() + "**" + getCapsGap(agentFullName(agentStats[x][0])) + "KDA: **" + str("%.1f" % (round((agentStats[x][3]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][4]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][5]/agentStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((agentStats[x][3]/agentStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((agentStats[x][2]/agentStats[x][1]), 3)*100)) + "%**   |   Pick%: **" + str("%.1f" % (round((agentStats[x][1]/allgames), 3)*100)) + "%**   |   Games: **" + str(agentStats[x][1]) + "**   |   Score: **" + str(round((agentStats[x][2]**3)/(agentStats[x][1]**2)*10)) + "**\n"
         else:
-            stats_str[0] += getCountry(agentStats[x][0]) + " [**" + agentStats[x][0] + "**] **" + agentFullName(agentStats[x][0]).upper() + "**" + getCapsGap(agentFullName(agentStats[x][0])) + "KDA: **" + str("%.1f" % (round((agentStats[x][3]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][4]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][5]/agentStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((agentStats[x][3]/agentStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((agentStats[x][2]/agentStats[x][1]), 3)*100)) + "%**   |   Pick%: **" + str("%.1f" % (round((agentStats[x][1]/allgames), 3)*100)) + "%**   |   Games: **" + str(agentStats[x][1]) + "**\n"
+            stats_str[0] += getCountry(agentStats[x][0]) + " [**" + agentStats[x][0] + "**] **" + agentFullName(agentStats[x][0]).upper() + "**" + getCapsGap(agentFullName(agentStats[x][0])) + "KDA: **" + str("%.1f" % (round((agentStats[x][3]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][4]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][5]/agentStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((agentStats[x][3]/agentStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((agentStats[x][2]/agentStats[x][1]), 3)*100)) + "%**   |   Pick%: **" + str("%.1f" % (round((agentStats[x][1]/allgames), 3)*100)) + "%**   |   Games: **" + str(agentStats[x][1]) + "**   |   Score: **" + str(round((agentStats[x][2]**3)/(agentStats[x][1]**2)*10)) + "**\n"
     await ctx.send(stats_str[0])
     if len(stats_str[1]) != 0:
         await ctx.send(stats_str[1])
@@ -663,7 +666,76 @@ async def player(ctx, arg1=None, arg2=None):
 async def role(ctx):
     worksheet = sh.get_worksheet(1)
     data = worksheet.get("B2:AT")
-    
+
+@client.command()
+async def rolecomb(ctx, arg1=None):
+    worksheet = sh.get_worksheet(1)
+    data = worksheet.get("C2:AT")
+    map = worksheet.get("B2:B")
+    agentsCompStats = []
+    allgames = 0
+    passGame = False
+    for x in range(len(data)):
+        if arg1 == None:
+            None
+        else:
+            if arg1.lower() != map[x][0].lower():
+                passGame = True
+                continue
+            else:
+                passGame = False
+        if passGame == True:
+            continue
+        agentsComp = []
+        allgames += 1
+        duelist = 0
+        initiator = 0
+        controller = 0
+        sentinel = 0
+        if int(data[x][0]) > int(data[x][1]):
+            win = 1
+        else:
+            win = 0
+        for y in range(len(players)):
+            try:
+                if data[x][4+y*4] != "":
+                    agentsComp.append(data[x][4+y*4])
+            except:
+                pass
+        for y in range(len(agentsComp)):
+            if getAgentRole(agentsComp[y]) == "D":
+                duelist += 1
+            elif getAgentRole(agentsComp[y]) == "I":
+                initiator += 1
+            elif getAgentRole(agentsComp[y]) == "C":
+                controller += 1
+            elif getAgentRole(agentsComp[y]) == "S":
+                sentinel += 1
+        if duelist+initiator+controller+sentinel != 5:
+            allgames -= 1
+            continue
+        agentsCompSTR = str(duelist) + str(initiator) + str(controller) + str(sentinel)
+        if len(agentsCompStats) == 0:
+            agentsCompStats.append([agentsCompSTR, 1, win])
+        else:
+            agentFound = False
+            for y in range(len(agentsCompStats)):
+                if agentsCompSTR == agentsCompStats[y][0]:
+                    agentsCompStats[y][1] += 1
+                    agentsCompStats[y][2] += win
+                    agentFound = True
+                    break
+                else:
+                    agentFound = False
+            if agentFound == False:
+                agentsCompStats.append([agentsCompSTR, 1, win])
+
+    agentsCompStats = sorted(agentsCompStats, key=itemgetter(1), reverse=True)
+    stats_str = ""
+    for x in range(len(agentsCompStats)):
+        if x < 10:
+            stats_str += "**" + agentsCompStats[x][0][0] + "x** Duelist | **" + agentsCompStats[x][0][1] + "x** Initiator | **" + agentsCompStats[x][0][2] + "x** Controller | **" + agentsCompStats[x][0][3] + "x** Sentinel   |   Win%: **" + str("%.1f" % (round((agentsCompStats[x][2]/agentsCompStats[x][1]), 3)*100)) + "%**   |   Games: **" + str(agentsCompStats[x][1]) + "**\n"
+    await ctx.send(stats_str)
 
 @client.command()
 async def rounds(ctx, arg1=None):
@@ -948,6 +1020,12 @@ def getPlayerIndex(player):
     for x in range(len(players)):
         if player == players[x][0] or player == playerfast[x]:
             return x
+
+def getAgentRole(agent):
+    for x in range(len(agents)):
+        if agent.upper() == agents[x] or agent.capitalize() == agents_full[x]:
+            return agents_role[x]
+
 
 keep_alive()
 #run the bot
