@@ -19,6 +19,7 @@ playerwidth = sh.get_worksheet(0).get("D3:D12")
 agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra"]
 agentFlag = [":flag_gb:", ":flag_kr:", ":flag_cn:", ":flag_ru:", ":flag_us:", ":grey_question:", ":flag_se:", ":flag_ma:", ":flag_us:", ":flag_br:", ":flag_mx:", ":flag_de:", ":flag_au:", ":flag_jp:", ":flag_gh:"]
+agents_role = ["D", "D", "S", "I", "C", "C", "I", "S", "C", "D", "D", "S", "I", "D", "C"]
 
 maps = ["Bind", "Haven", "Split", "Ascent", "Icebox", "Breeze"]
 mapFlag = [":flag_ma:", ":flag_bt:", ":flag_jp:", ":flag_it:", ":flag_ru:", ":flag_tt:"]
@@ -158,11 +159,41 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
         await ctx.send("Created the game with following attributes!\nDate: **" + date + "**\nMap: **" + played_map.capitalize() + "**   |   First Round Site: **" + firstSide.upper() + "**\nResult: **" + rw + "** - **" + rl + "**\n\nPlayer specific stats:\n" + stats)
 
 @client.command()
-async def agent(ctx):
-    string = ""
-    for x in range(len(agents)):
-        string += agentFlag[x] + " [**" + agents[x] + "**] **" + agents_full[x] + "**\n"
-    await ctx.send(string)
+async def agent(ctx, arg1=None):
+    if arg1 == None:
+        worksheet = sh.get_worksheet(1)
+        data = worksheet.get("C2:AT")
+
+        agentStats = []
+
+        for x in range(len(data)):
+            for y in range(len(players)):
+                win = 0
+                lose = 0
+                draw = 0
+                if data[x][0] > data[x][1]:
+                    win = 1
+                elif data[x][0] < data[x][1]:
+                    lose = 1
+                else:
+                    draw = 0
+                agentFound = False
+                for z in range(len(agentStats)):
+                    if data[x][4+4*y] == agentStats[z][0]:
+                        agentFound = True
+                        agentStats[z][1] += win
+                        agentStats[z][2] += lose
+                        agentStats[z][3] += draw
+                        break
+                if agentFound == False:
+                    agentStats.append([data[x][4+4*y], win, lose, draw])
+        print(agentStats)
+
+    elif arg1.lower() == "info":
+        string = ""
+        for x in range(len(agents)):
+            string += agentFlag[x] + " [**" + agents[x] + "**] **" + agents_full[x] + "**\n"
+        await ctx.send(string)
 
 @client.command()
 async def game(ctx, arg1=None):
@@ -554,6 +585,12 @@ async def player(ctx, arg1=None, arg2=None):
         for x in range(len(playerStats)):
             stats_str += "**" + playerStats[x][0] + int(playerwidth[getPlayerIndex(playerStats[x][0])][0])*" " + "**   KDA: **" + str("%.1f" % (round((playerStats[x][3]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][4]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][5]/playerStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((playerStats[x][3]/playerStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((playerStats[x][2]/playerStats[x][1]),3)*100)) + "%**   |   Games: **" + str(playerStats[x][1]) + "**\n"
         await ctx.send(stats_str)
+
+@client.command()
+async def role(ctx):
+    worksheet = sh.get_worksheet(1)
+    data = worksheet.get("B2:AT")
+    
 
 @client.command()
 async def rounds(ctx, arg1=None):
