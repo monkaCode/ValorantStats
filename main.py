@@ -1,3 +1,4 @@
+from os import supports_bytes_environ
 import discord # install with: pip install discord.py
 from discord.ext import commands # to use the commands from discord.ext
 import gspread
@@ -159,41 +160,113 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
         await ctx.send("Created the game with following attributes!\nDate: **" + date + "**\nMap: **" + played_map.capitalize() + "**   |   First Round Site: **" + firstSide.upper() + "**\nResult: **" + rw + "** - **" + rl + "**\n\nPlayer specific stats:\n" + stats)
 
 @client.command()
-async def agent(ctx, arg1=None):
-    if arg1 == None:
-        worksheet = sh.get_worksheet(1)
-        data = worksheet.get("C2:AT")
+async def agent(ctx, arg1=None, arg2=None):
+    worksheet = sh.get_worksheet(1)
+    data = worksheet.get("C2:AT")
+    map = worksheet.get("B2:B")
+    agentStats = []
+    allgames = 0
 
-        agentStats = []
+    for x in range(len(maps)):
+        if arg1 == None:
+            arg1Map = False
+            sort_algo = None
+            break
+        elif arg1.lower() == maps[x].lower():
+            arg1Map = True
+            if arg2 == None:
+                sort_algo = None
+            else:
+                sort_algo = arg2.lower()
+            break
+        else:
+            arg1Map = False
+            sort_algo = arg1.lower()
 
+    if arg1Map == False:
         for x in range(len(data)):
-            for y in range(len(players)):
+            allgames += 1
+            if int(data[x][0]) > int(data[x][1]):  
+                win = 1
+            else:
                 win = 0
-                lose = 0
-                draw = 0
-                if data[x][0] > data[x][1]:
+            for y in range(len(players)):
+                try:
+                    if len(agentStats) == 0:
+                        agentStats.append([data[x][(y*4)+4], 1, win, int(data[x][(y*4)+5]), int(data[x][(y*4)+6]), int(data[x][(y*4)+7])])
+                    else:
+                        agentNew = False
+                        for z in range(len(agentStats)):
+                            if agentStats[z][0] == data[x][(y*4)+4]:
+                                agentStats[z][1] += 1
+                                agentStats[z][2] += win
+                                agentStats[z][3] += int(data[x][(y*4)+5])
+                                agentStats[z][4] += int(data[x][(y*4)+6])
+                                agentStats[z][5] += int(data[x][(y*4)+7])
+                                agentNew = False
+                                break
+                            else:
+                                agentNew = True
+                        if agentNew == True:
+                            agentStats.append([data[x][(y*4)+4], 1, win, int(data[x][(y*4)+5]), int(data[x][(y*4)+6]), int(data[x][(y*4)+7])])
+                except:
+                    pass
+    else:
+        for x in range(len(data)):
+            if arg1.lower() == map[x][0].lower():
+                allgames += 1
+                if int(data[x][0]) > int(data[x][1]):  
                     win = 1
-                elif data[x][0] < data[x][1]:
-                    lose = 1
                 else:
-                    draw = 0
-                agentFound = False
-                for z in range(len(agentStats)):
-                    if data[x][4+4*y] == agentStats[z][0]:
-                        agentFound = True
-                        agentStats[z][1] += win
-                        agentStats[z][2] += lose
-                        agentStats[z][3] += draw
-                        break
-                if agentFound == False:
-                    agentStats.append([data[x][4+4*y], win, lose, draw])
-        print(agentStats)
+                    win = 0
+                for y in range(len(players)):
+                    try:
+                        if len(agentStats) == 0:
+                            agentStats.append([data[x][(y*4)+4], 1, win, int(data[x][(y*4)+5]), int(data[x][(y*4)+6]), int(data[x][(y*4)+7])])
+                        else:
+                            agentNew = False
+                            for z in range(len(agentStats)):
+                                if agentStats[z][0] == data[x][(y*4)+4]:
+                                    agentStats[z][1] += 1
+                                    agentStats[z][2] += win
+                                    agentStats[z][3] += int(data[x][(y*4)+5])
+                                    agentStats[z][4] += int(data[x][(y*4)+6])
+                                    agentStats[z][5] += int(data[x][(y*4)+7])
+                                    agentNew = False
+                                    break
+                                else:
+                                    agentNew = True
+                            if agentNew == True:
+                                agentStats.append([data[x][(y*4)+4], 1, win, int(data[x][(y*4)+5]), int(data[x][(y*4)+6]), int(data[x][(y*4)+7])])
+                    except:
+                        pass
 
-    elif arg1.lower() == "info":
-        string = ""
-        for x in range(len(agents)):
-            string += agentFlag[x] + " [**" + agents[x] + "**] **" + agents_full[x] + "**\n"
-        await ctx.send(string)
+    if sort_algo == None:
+        agentStats = sorted(agentStats, key=itemgetter(1), reverse=True)
+    elif sort_algo == "--wins":
+        agentStats = sorted(agentStats, key=itemgetter(2), reverse=True)
+    elif sort_algo == "--kills":
+        agentStats = sorted(agentStats, key= lambda x: x[3]/x[1], reverse=True)
+    elif sort_algo == "--deaths":
+        agentStats = sorted(agentStats, key= lambda x: x[4]/x[1], reverse=True)
+    elif sort_algo == "--assists":
+        agentStats = sorted(agentStats, key= lambda x: x[5]/x[1], reverse=True)
+    elif sort_algo == "--kd":
+        agentStats = sorted(agentStats, key= lambda x: x[3]/x[4], reverse=True)
+    elif sort_algo == "--kda":
+        agentStats = sorted(agentStats, key= lambda x: (x[3]+x[5])/x[4], reverse=True)
+    elif sort_algo == "--win%":
+        agentStats = sorted(agentStats, key= lambda x: x[2]/x[1], reverse=True)
+    
+    stats_str = ["", ""]
+    for x in range(len(agentStats)):
+        if len(stats_str[0]) > 1800:
+            stats_str[1] += getCountry(agentStats[x][0]) + " [**" + agentStats[x][0] + "**] **" + agentFullName(agentStats[x][0]).upper() + "**" + getCapsGap(agentFullName(agentStats[x][0])) + "KDA: **" + str("%.1f" % (round((agentStats[x][3]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][4]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][5]/agentStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((agentStats[x][3]/agentStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((agentStats[x][2]/agentStats[x][1]), 3)*100)) + "%**   |   Pick%: **" + str("%.1f" % (round((agentStats[x][1]/allgames), 3)*100)) + "%**   |   Games: **" + str(agentStats[x][1]) + "**\n"
+        else:
+            stats_str[0] += getCountry(agentStats[x][0]) + " [**" + agentStats[x][0] + "**] **" + agentFullName(agentStats[x][0]).upper() + "**" + getCapsGap(agentFullName(agentStats[x][0])) + "KDA: **" + str("%.1f" % (round((agentStats[x][3]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][4]/agentStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((agentStats[x][5]/agentStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((agentStats[x][3]/agentStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((agentStats[x][2]/agentStats[x][1]), 3)*100)) + "%**   |   Pick%: **" + str("%.1f" % (round((agentStats[x][1]/allgames), 3)*100)) + "%**   |   Games: **" + str(agentStats[x][1]) + "**\n"
+    await ctx.send(stats_str[0])
+    if len(stats_str[1]) != 0:
+        await ctx.send(stats_str[1])
 
 @client.command()
 async def game(ctx, arg1=None):
@@ -578,7 +651,7 @@ async def player(ctx, arg1=None, arg2=None):
             playerStats = sorted(playerStats, key= lambda x: x[3]/x[4], reverse=True)
         elif arg1.lower() == "--kda":
             playerStats = sorted(playerStats, key= lambda x: (x[3]+x[5])/x[4], reverse=True)
-        elif arg1.lower() == "-win%":
+        elif arg1.lower() == "--win%":
             playerStats = sorted(playerStats, key= lambda x: x[2]/x[1], reverse=True)
 
         stats_str = ""
