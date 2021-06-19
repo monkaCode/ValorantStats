@@ -18,9 +18,9 @@ players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team member
 playerfast = [settings_str[4].replace("Player 1: ", "").replace("\n", ""), settings_str[5].replace("Player 2: ", "").replace("\n", ""), settings_str[6].replace("Player 3: ", "").replace("\n", ""), settings_str[7].replace("Player 4: ", "").replace("\n", ""), settings_str[8].replace("Player 5: ", "").replace("\n", ""), settings_str[9].replace("Player 6: ", "").replace("\n", ""), settings_str[10].replace("Player 7: ", "").replace("\n", ""), settings_str[11].replace("Player 8: ", "").replace("\n", ""), settings_str[12].replace("Player 9: ", "").replace("\n", ""), settings_str[13].replace("Player 10: ", "").replace("\n", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
 playerwidth = sh.get_worksheet(0).get("D3:D12")
 
-agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
-agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra"]
-agentFlag = [":flag_gb:", ":flag_kr:", ":flag_cn:", ":flag_ru:", ":flag_us:", ":grey_question:", ":flag_se:", ":flag_ma:", ":flag_us:", ":flag_br:", ":flag_mx:", ":flag_de:", ":flag_au:", ":flag_jp:", ":flag_gh:"]
+agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS", "KO"] # contractions of all agents
+agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra", "Kay/o"]
+agentFlag = [":flag_gb:", ":flag_kr:", ":flag_cn:", ":flag_ru:", ":flag_us:", ":grey_question:", ":flag_se:", ":flag_ma:", ":flag_us:", ":flag_br:", ":flag_mx:", ":flag_de:", ":flag_au:", ":flag_jp:", ":flag_gh:", ":grey_question:"]
 agents_role = ["D", "D", "S", "I", "C", "C", "I", "S", "C", "D", "D", "S", "I", "D", "C"]
 
 maps = ["Bind", "Haven", "Split", "Ascent", "Icebox", "Breeze"]
