@@ -9,13 +9,6 @@ A Google Sheets based tracking system, to store much of information from your VA
   
 </p>
 
-## How to install the Discord Bot
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/mYsGgcFFwgA/0.jpg)](http://www.youtube.com/watch?v=mYsGgcFFwgA)<br/>
-Watch [this video](http://www.youtube.com/watch?v=mYsGgcFFwgA "ValorantStats - Discord Bot Setup") above.
-
-### Addition to the video
-In the `settings.txt` file you can choose a voting message for the ?voting command. You can also add reaction to this message with a clock emoji, but be sure it's right.
-
 ## Setup commands
 
 ### ?changeprefix
@@ -116,7 +109,7 @@ If you don't use a sort-algorithm then the default is sorted descending to the a
 | round-losses    | The amount of rounds you've loss                                                                                                                 |
 | first-side      | The side you started from e.g. A for Attacker or D for Defender                                                                                  |
 | rounds          | If you win 13 - 1 and loss the third round then you type in WWLWWWWWWWWWWW (each letter is a round, if you won this round you type W and when you loss you type L) |
-| player1-5       | You don't need this option but it's very recommended at least to add 3 or more player to a game. The format for this option are [`<name>`,`<agent>`,`<kills>`,`<deaths>`,`<assists>`] you can also don't use these [ ] but it's more clear Be sure that there is no space between the commas. For the name type in the ingame name or the shortcut you set in the settings.txt file. For the agent you type in the whole name of the agent or use the shortcut (all shortcut for agents you can see with the "?agent" command) |
+| player1-5       | You don't need this option but it's very recommended at least to add 3 or more player to a game. The format for this option are [`<name>`,`<agent>`,`<kills>`,`<deaths>`,`<assists>`] you can also don't use these [ ] but it's more clear Be sure that there is no space between the commas. For the name type in the ingame name or the abbreviation. For the agent you type in the whole name of the agent or use the shortcut (all shortcut for agents you can see with the "?agent" command) |
 
 All agents shortcut:
 
@@ -144,6 +137,6 @@ All agents shortcut:
 ```
 
 ## General information
-In general you can use for `<name>` the ingame name or the shortcut you set in settings.txt
+In general you can use for `<name>` the ingame name or the abbreviation.
 
-❗️ **IMPORTANT**: Everytime when you change something in the `settings.txt` file or changed, replace or delete the names in the Google Sheet then you **must** restart the server on replit.com.
+❗️ **IMPORTANT**: Everytime when you change something about the player in Google Sheet, i prefer to run the ?verify command.
