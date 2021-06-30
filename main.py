@@ -1135,7 +1135,7 @@ async def verify(ctx):
             biggest_player_width = getCustomWidth(players[x][0])
     for x in range(len(players)):
         info.update_cell(3+x, 4, ("%.0f" % (round((biggest_player_width-getCustomWidth(players[x][0])) / 3, 0))))
-
+"""
 @client.command()
 async def voting(ctx):
     try:
@@ -1156,7 +1156,7 @@ async def voting(ctx):
                 emoji.append(clocks[y][0])
     for x in  range(len(emoji)):
         await message.add_reaction(emoji[x])
-
+"""
 def getCountry(item):
     for x in range(len(agents)):
         if item.upper() == agents[x] or item.capitalize() == agents_full[x]:
