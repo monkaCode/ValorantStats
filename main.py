@@ -1,22 +1,11 @@
-from os import supports_bytes_environ
 import discord # install with: pip install discord.py
 from discord.ext import commands # to use the commands from discord.ext
 import gspread
+import json
 from gspread.models import Worksheet
 from oauth2client.service_account import ServiceAccountCredentials
 from operator import itemgetter
 from keep_alive import keep_alive
-
-settings = open(r"settings.txt", "r")
-settings_str = settings.readlines()
-
-gsk = settings_str[15].replace("Google Sheets Key: ", "").replace("\n", "")
-gc = gspread.service_account(filename=r"credentials.json")
-sh = gc.open_by_key(gsk)
-
-players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
-playerfast = [settings_str[4].replace("Player 1: ", "").replace("\n", ""), settings_str[5].replace("Player 2: ", "").replace("\n", ""), settings_str[6].replace("Player 3: ", "").replace("\n", ""), settings_str[7].replace("Player 4: ", "").replace("\n", ""), settings_str[8].replace("Player 5: ", "").replace("\n", ""), settings_str[9].replace("Player 6: ", "").replace("\n", ""), settings_str[10].replace("Player 7: ", "").replace("\n", ""), settings_str[11].replace("Player 8: ", "").replace("\n", ""), settings_str[12].replace("Player 9: ", "").replace("\n", ""), settings_str[13].replace("Player 10: ", "").replace("\n", "")] # alias of each team member, be sure that the index of every item fits to their position in Google Sheets
-playerwidth = sh.get_worksheet(0).get("D3:D12")
 
 agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
 agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra"]
@@ -26,11 +15,27 @@ agents_role = ["D", "D", "S", "I", "C", "C", "I", "S", "C", "D", "D", "S", "I", 
 maps = ["Bind", "Haven", "Split", "Ascent", "Icebox", "Breeze"]
 mapFlag = [":flag_ma:", ":flag_bt:", ":flag_jp:", ":flag_it:", ":flag_ru:", ":flag_tt:"]
 
-developerID = int(settings_str[0].replace("DeveloperID: ", "")) # discrod ID of the developer
-assistantID = int(settings_str[1].replace("AssistantID: ", "")) # discord ID of the person who can also add games
+#get Google Sheet ID
+def get_gsk(client, message):
+    with open("gsk.json", "r") as f:
+        gsk = json.load(f)
+    return gsk[str(message.guild.id)]
+
+gc = gspread.service_account(filename=r"credentials.json")
+
+#get developerID
+def get_developerID(client, message):
+    with open("developerIDs.json", "r") as f:
+        developerID = json.load(f)
+    return int(developerID[str(message.guild.id)])
 
 # set a bot prefix
-client = commands.Bot(command_prefix=settings_str[17].replace("Discord Bot Prefix: ", "").replace("\n", ""), help_command=None)
+def get_prefix(client, message):
+    with open("prefixes.json", "r") as f:
+        prefixes = json.load(f)
+    return prefixes[str(message.guild.id)]
+
+client = commands.Bot(command_prefix=get_prefix, help_command=None)
 
 # import the token from a extern file for security
 tokenTxt = open(r"token.txt", "r")
@@ -43,6 +48,44 @@ async def on_ready():
     await client.change_presence(status=discord.Status.online, activity=discord.Game("VALORANT"))
     print('We have logged in as {0.user}'.format(client))
 
+#bot join the first time
+@client.event
+async def on_guild_join(guild):
+    with open("prefixes.json", "r") as f:
+        prefixes = json.load(f)
+    prefixes[str(guild.id)] = "?"
+    with open("prefixes.json", "w") as f:
+        json.dump(prefixes, f, indent=4)
+    with open("gsk.json", "r") as f:
+        gsk = json.load(f)
+    gsk[str(guild.id)] = "0"
+    with open("gsk.json", "w") as f:
+        json.dump(gsk, f, indent=4)
+    with open("developerIDs.json", "r") as f:
+        developerID = json.load(f)
+    developerID[str(guild.id)] = "0"
+    with open("developerIDs.json", "w") as f:
+        json.dump(developerID, f, indent=4)
+    
+#bot leave
+@client.event
+async def on_guild_remove(guild):
+    with open("prefixes.json", "r") as f:
+        prefixes = json.load(f)
+    prefixes.pop(str(guild.id))
+    with open("prefixes.json", "w") as f:
+        json.dump(prefixes, f, indent=4)
+    with open("gsk.json", "r") as f:
+        gsk = json.load(f)
+    gsk.pop(str(guild.id))
+    with open("gsk.json", "w") as f:
+        json.dump(gsk, f, indent=4)
+    with open("developerIDs.json", "r") as f:
+        developerID = json.load(f)
+    developerID.pop(str(guild.id))
+    with open("developerIDs.json", "w") as f:
+        json.dump(developerID, f, indent=4)
+
 # output if an error occured
 @client.event
 async def on_command_error(ctx, error):
@@ -53,12 +96,87 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.BadArgument):
         await ctx.send("Give me a valid argument.")
     else:
+        with open("developerIDs.json", "r") as f:
+            developerIDs = json.lod(f)
+        developerID = int(developerIDs[str(ctx.guild.id)])
         await ctx.send("Something went wrong, <@" + str(developerID) + ">.") # mentioned the developer in discord if something go wrong
         print(error)
 
+#set developerID
+@client.command()
+async def setdeveloperID(ctx, id):
+    if ctx.author.id == ctx.guild.owner_id:
+        with open("developerIDs.json", "r") as f:
+            developerID = json.load(f)
+        developerID[str(ctx.guild.id)] = id
+        with open("developerIDs.json", "w") as f:
+            json.dump(developerID, f, indent=4)
+        try:
+            await ctx.send(f"**Set the developerID to:** {id} -> **User:** {await client.fetch_user(int(id))}")
+        except:
+            await ctx.send(f"**Set the developerID to:** {id} -> **No valid user!**")
+    else:
+        await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to change the developerID.")
+
+#show developerID
+@client.command()
+async def showdeveloperID(ctx):
+    with open("developerIDs.json", "r") as f:
+        developerID = json.load(f)
+    id = developerID[str(ctx.guild.id)]
+    try:
+        await ctx.send(f"**DeveloperID:** {id} -> **User:** {await client.fetch_user(int(id))}")
+    except:
+        await ctx.send(f"**DeveloperID:** {id} -> **No valid user!**")
+
+#change prefix
+@client.command()
+async def changeprefix(ctx, prefix):
+    if ctx.author.id == ctx.guild.owner_id:
+        with open("prefixes.json", "r") as f:
+            prefixes = json.load(f)
+        prefixes[str(ctx.guild.id)] = prefix
+        with open("prefixes.json", "w") as f:
+            json.dump(prefixes, f, indent=4)
+        await ctx.send(f"**Prefix changed to:** {prefix}")
+    else:
+        await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to change the bot prefix.")
+
+#set gsk
+@client.command()
+async def setkey(ctx, id):
+    if ctx.author.id == ctx.guild.owner_id:
+        with open("gsk.json", "r") as f:
+            gsk = json.load(f)
+        gsk[str(ctx.guild.id)] = id
+        with open("gsk.json", "w") as f:
+            json.dump(gsk, f, indent=4)
+        await ctx.send(f"**Google Sheet Key set to:** {id}")
+    else:
+        await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set the Google Sheet Key.")
+
+#show gsk
+@client.command()
+async def showkey(ctx):
+    if ctx.author.id == ctx.guild.owner_id:
+        with open("gsk.json", "r") as f:
+            gsk = json.load(f)
+        key = gsk[str(ctx.guild.id)]
+        await ctx.send(f"**Google Sheet Key:** {key}")
+    else:
+        await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to see the Google Sheet Key.")
+
 @client.command()
 async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=None, played_rounds=None, p1=None, p2=None, p3=None, p4=None, p5=None):
-    
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
+    developerID = get_developerID(client, ctx)
+    players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
+    playerfast = sh.get_worksheet(0).get("E3:E12")
     info = sh.get_worksheet(0)
     worksheet = sh.get_worksheet(1)
     error = []
@@ -68,8 +186,11 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
     player_submit = [[None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None], [None, None, None, None, None, None]]
     player_agent_str = []
     try:
-        if ctx.author.id != developerID and ctx.author.id != assistantID:
-            error.append("You can't add a game. Contact **" + str(await client.fetch_user(developerID)) + "** or **" + str(await client.fetch_user(assistantID)) + "** for adding a game.")
+        if ctx.author.id != developerID:
+            try:
+                error.append("You can't add a game. Contact **" + str(await client.fetch_user(developerID)) + "** for adding a game.")
+            except:
+                error.append(f"The DeveloperID ({developerID}) isn't a valid user!")
         for x in range(len(maps)):
             if str(played_map.lower()) == str(maps[x].lower()):
                 mapExist = True
@@ -162,6 +283,13 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
 
 @client.command()
 async def agent(ctx, arg1=None, arg2=None):
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
+    players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
     worksheet = sh.get_worksheet(1)
     data = worksheet.get("C2:AT")
     map = worksheet.get("B2:B")
@@ -273,6 +401,14 @@ async def agent(ctx, arg1=None, arg2=None):
 
 @client.command()
 async def game(ctx, arg1=None):
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
+    players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
+    playerwidth = sh.get_worksheet(0).get("D3:D12")
 
     worksheet = sh.get_worksheet(1)
     data = worksheet.get("A2:AT")
@@ -335,7 +471,11 @@ async def game(ctx, arg1=None):
                 break
         playerStats = sorted(playerStats, key=itemgetter(2), reverse=True)
         for y in range(len(playerStats)):
-            player_stats_str += getCountry(playerStats[y][1]) + " **" +agentFullName(playerStats[y][1]).upper() + "**" + getCapsGap(playerStats[y][1]) + "   **" + playerStats[y][0] + int(playerwidth[getPlayerIndex(playerStats[y][0])][0])*" " +"**   |   KDA: **" + str(playerStats[y][2]) + "** / **" + str(playerStats[y][3]) + "** / **" + str(playerStats[y][4]) + "**\n"
+            for z in range(len(players)):
+                if playerStats[z][0] == players[y][0]:
+                    playerIndex = z
+                    break
+            player_stats_str += getCountry(playerStats[y][1]) + " **" +agentFullName(playerStats[y][1]).upper() + "**" + getCapsGap(playerStats[y][1]) + "   **" + playerStats[y][0] + int(playerwidth[playerIndex][0])*" " +"**   |   KDA: **" + str(playerStats[y][2]) + "** / **" + str(playerStats[y][3]) + "** / **" + str(playerStats[y][4]) + "**\n"
         for y in range(len(desc_round_list)):
             desc_round_str += " " + desc_round_list[y]
         await ctx.send("[**" + str(len(data)+1) + "**] Date: **" + str(data[x][0]) + "**   |   Map: **" + data[x][1] + "**\nResult: **" + str(data[x][2]) + "** - **" + str(data[x][3]) + "**\n\n" + desc_round_str + "\n" + your_round_str + "\n" + enemy_round_str + "\n.")
@@ -404,7 +544,11 @@ async def game(ctx, arg1=None):
                         break
                 playerStats = sorted(playerStats, key=itemgetter(2), reverse=True)
                 for y in range(len(playerStats)):
-                    player_stats_str += getCountry(playerStats[y][1]) + " **" +agentFullName(playerStats[y][1]).upper() + "**" + getCapsGap(playerStats[y][1]) + "   **" + playerStats[y][0] + int(playerwidth[getPlayerIndex(playerStats[y][0])][0])*" " + "**   |   KDA: **" + str(playerStats[y][2]) + "** / **" + str(playerStats[y][3]) + "** / **" + str(playerStats[y][4]) + "**\n"
+                    for z in range(len(players)):
+                        if playerStats[z][0] == players[y][0]:
+                            playerIndex = z
+                            break
+                    player_stats_str += getCountry(playerStats[y][1]) + " **" +agentFullName(playerStats[y][1]).upper() + "**" + getCapsGap(playerStats[y][1]) + "   **" + playerStats[y][0] + int(playerwidth[playerIndex][0])*" " + "**   |   KDA: **" + str(playerStats[y][2]) + "** / **" + str(playerStats[y][3]) + "** / **" + str(playerStats[y][4]) + "**\n"
                 for y in range(len(desc_round_list)):
                     desc_round_str += " " + desc_round_list[y]
                 await ctx.send("[**" + str(arg1) + "**] Date: **" + str(data[x][0]) + "**   |   Map: **" + data[x][1] + "**\nResult: **" + str(data[x][2]) + "** - **" + str(data[x][3]) + "**\n\n" + desc_round_str + "\n" + your_round_str + "\n" + enemy_round_str + "\n.")
@@ -412,6 +556,12 @@ async def game(ctx, arg1=None):
         
 @client.command()
 async def map(ctx, arg1=None, arg2=None):
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
     worksheet = sh.get_worksheet(1)
     data = worksheet.get("B2:D")
 
@@ -477,11 +627,22 @@ async def map(ctx, arg1=None, arg2=None):
 
 @client.command()
 async def player(ctx, arg1=None, arg2=None):
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
+    players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
+    playerfastold = sh.get_worksheet(0).get("E3:E12")
+    playerfast = []
+    for x in range(len(playerfastold)):
+        playerfast.append(playerfastold[x][0])
+    playerwidth = sh.get_worksheet(0).get("D3:D12")
     worksheet = sh.get_worksheet(1)
     data = worksheet.get("G2:AT")
     winrate = worksheet.get("C2:D")
     playedmap = worksheet.get("B2:B")
-
     
     for x in range(len(players)):
         if arg1 == None:
@@ -659,16 +820,32 @@ async def player(ctx, arg1=None, arg2=None):
 
         stats_str = ""
         for x in range(len(playerStats)):
-            stats_str += "**" + playerStats[x][0] + int(playerwidth[getPlayerIndex(playerStats[x][0])][0])*" " + "**   KDA: **" + str("%.1f" % (round((playerStats[x][3]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][4]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][5]/playerStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((playerStats[x][3]/playerStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((playerStats[x][2]/playerStats[x][1]),3)*100)) + "%**   |   Games: **" + str(playerStats[x][1]) + "**\n"
+            for y in range(len(players)):
+                if playerStats[x][0] == players[y][0]:
+                    playerIndex = y
+                    break
+            stats_str += "**" + playerStats[x][0] + int(playerwidth[playerIndex][0])*" " + "**   KDA: **" + str("%.1f" % (round((playerStats[x][3]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][4]/playerStats[x][1]), 1))) + "** / **" + str("%.1f" % (round((playerStats[x][5]/playerStats[x][1]), 1))) + "**   |   K/D: **" + str("%.2f" % (round((playerStats[x][3]/playerStats[x][4]), 2))) + "**   |   Win%: **" + str("%.1f" % (round((playerStats[x][2]/playerStats[x][1]),3)*100)) + "%**   |   Games: **" + str(playerStats[x][1]) + "**\n"
         await ctx.send(stats_str)
 
 @client.command()
 async def role(ctx):
-    worksheet = sh.get_worksheet(1)
-    data = worksheet.get("B2:AT")
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
 
 @client.command()
 async def rolecomb(ctx, arg1=None):
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
+    players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
+
     worksheet = sh.get_worksheet(1)
     data = worksheet.get("C2:AT")
     map = worksheet.get("B2:B")
@@ -739,6 +916,13 @@ async def rolecomb(ctx, arg1=None):
 
 @client.command()
 async def rounds(ctx, arg1=None):
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
+
     worksheet = sh.get_worksheet(1)
     data = worksheet.get("B2:F")
 
@@ -919,6 +1103,14 @@ async def rounds(ctx, arg1=None):
 
 @client.command()
 async def verify(ctx):
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
+    players = sh.get_worksheet(0).get("C3:C12") # parse the names of the team members
+
     info = sh.get_worksheet(0)
 
     worksheet = sh.get_worksheet(1)
@@ -946,6 +1138,12 @@ async def verify(ctx):
 
 @client.command()
 async def voting(ctx):
+    try:
+        sh = gc.open_by_key(get_gsk(client, ctx))
+        print(sh)
+    except:
+        await ctx.send("The Google Sheet Key is invalid. Be sure the sheet is shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.")
+        return
 
     voting_msg = settings_str[19].replace("Voting command message: ", "").replace("\n", "").replace('"', "")
     voting_clock = settings_str[20].replace("Voting clock reactions: ", "").replace("\n", "").split(",")
@@ -1015,11 +1213,6 @@ def getCustomWidth(item):
                 except:
                     pass
     return width
-
-def getPlayerIndex(player):
-    for x in range(len(players)):
-        if player == players[x][0] or player == playerfast[x]:
-            return x
 
 def getAgentRole(agent):
     for x in range(len(agents)):
