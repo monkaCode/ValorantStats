@@ -7,10 +7,10 @@ from oauth2client.service_account import ServiceAccountCredentials
 from operator import itemgetter
 from keep_alive import keep_alive
 
-agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS"] # contractions of all agents
-agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra"]
-agentFlag = [":flag_gb:", ":flag_kr:", ":flag_cn:", ":flag_ru:", ":flag_us:", ":grey_question:", ":flag_se:", ":flag_ma:", ":flag_us:", ":flag_br:", ":flag_mx:", ":flag_de:", ":flag_au:", ":flag_jp:", ":flag_gh:"]
-agents_role = ["D", "D", "S", "I", "C", "C", "I", "S", "C", "D", "D", "S", "I", "D", "C"]
+agents = ["PX", "JT", "SA", "SV", "BS", "OM", "BR", "CY", "VI", "RZ", "RY", "KJ", "SK", "YO", "AS", "KO"] # contractions of all agents
+agents_full = ["Phoenix", "Jett", "Sage", "Sova", "Brimstone", "Omen", "Breach", "Cypher", "Viper", "Raze", "Reyna", "Killjoy", "Skye", "Yoru", "Astra", "Kay/o"]
+agentFlag = [":flag_gb:", ":flag_kr:", ":flag_cn:", ":flag_ru:", ":flag_us:", ":grey_question:", ":flag_se:", ":flag_ma:", ":flag_us:", ":flag_br:", ":flag_mx:", ":flag_de:", ":flag_au:", ":flag_jp:", ":flag_gh:", ":grey_question:"]
+agents_role = ["D", "D", "S", "I", "C", "C", "I", "S", "C", "D", "D", "S", "I", "D", "C", "I"]
 
 maps = ["Bind", "Haven", "Split", "Ascent", "Icebox", "Breeze"]
 mapFlag = [":flag_ma:", ":flag_bt:", ":flag_jp:", ":flag_it:", ":flag_ru:", ":flag_tt:"]
