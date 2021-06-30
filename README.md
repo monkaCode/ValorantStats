@@ -16,6 +16,25 @@ Watch [this video](http://www.youtube.com/watch?v=mYsGgcFFwgA "ValorantStats - D
 ### Addition to the video
 In the `settings.txt` file you can choose a voting message for the ?voting command. You can also add reaction to this message with a clock emoji, but be sure it's right.
 
+## Setup commands
+
+### ?changeprefix
+```
+?changeprefix <prefix>           -> Change the prefix
+```
+
+### ?showdeveloperID or ?setdeveloperID
+```
+?showdeveloperID                 -> Show the DeveloperID and the Discord user for this ID
+?setdeveloperID <id>             -> Set the DeveloperID (only with developer or server owner access)
+```
+
+### ?showkey and ?setkey
+```
+?showkey                         -> Show the Google Sheet Key (only with developer or server owner access)
+?setkey <key>                    -> Set the Google Sheet Key (only with developer or server owner access)
+```
+
 ## All commands
 
 ### ?player
