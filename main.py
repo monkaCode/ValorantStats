@@ -105,7 +105,8 @@ async def on_command_error(ctx, error):
 #set developerID
 @client.command()
 async def setdeveloperID(ctx, id):
-    if ctx.author.id == ctx.guild.owner_id:
+    developerID = get_developerID(client, ctx)
+    if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
         with open("developerIDs.json", "r") as f:
             developerID = json.load(f)
         developerID[str(ctx.guild.id)] = id
@@ -132,7 +133,8 @@ async def showdeveloperID(ctx):
 #change prefix
 @client.command()
 async def changeprefix(ctx, prefix):
-    if ctx.author.id == ctx.guild.owner_id:
+    developerID = get_developerID(client, ctx)
+    if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
         with open("prefixes.json", "r") as f:
             prefixes = json.load(f)
         prefixes[str(ctx.guild.id)] = prefix
@@ -145,7 +147,8 @@ async def changeprefix(ctx, prefix):
 #set gsk
 @client.command()
 async def setkey(ctx, id):
-    if ctx.author.id == ctx.guild.owner_id:
+    developerID = get_developerID(client, ctx)
+    if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
         with open("gsk.json", "r") as f:
             gsk = json.load(f)
         gsk[str(ctx.guild.id)] = id
@@ -158,7 +161,8 @@ async def setkey(ctx, id):
 #show gsk
 @client.command()
 async def showkey(ctx):
-    if ctx.author.id == ctx.guild.owner_id:
+    developerID = get_developerID(client, ctx)
+    if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
         with open("gsk.json", "r") as f:
             gsk = json.load(f)
         key = gsk[str(ctx.guild.id)]
