@@ -47,7 +47,7 @@ if tokenTxt.mode == "r":
 async def on_ready():
     with open("prefixes.json", "r") as f:
         serverAmmount = len(json.load(f))
-    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"Analyse Stats on {serverAmmount} servers"))
+    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=f"Stats on {serverAmmount} servers"))
     print('We have logged in as {0.user}'.format(client))
 
 #bot join the first time
