@@ -1175,6 +1175,51 @@ async def voting(ctx):
         await message.add_reaction(emoji[x])
 """
 @client.command()
+async def setup(ctx):
+    developerID = get_developerID(client, ctx)
+    prefix = get_prefix(client, ctx)
+    if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
+        await ctx.send("[**1.**]: Make an copy of this Google Sheet Document: https://docs.google.com/spreadsheets/d/1vpNyLf-vzPHh88zD2xacgQFGOTUvunAH3pKrY9RcR6Y/edit?usp=sharing\n[**2.**]: Share this Google Sheet Document to this email address: **monkacode@valorantstats.iam.gserviceaccount.com**\n[**3.**]: Type in the URL of your copy or the key of the Document:")
+        channel = ctx.channel
+        author = ctx.author.id
+        def check(m):
+            return m.channel == channel and m.author.id == author
+        msg = await client.wait_for("message", check=check)
+        keyList = msg.content.split("/")
+        if len(keyList) == 1:
+            key = keyList[0]
+        else:
+            key = keyList[5]
+        with open("gsk.json", "r") as f:
+            gsk = json.load(f)
+        gsk[str(ctx.guild.id)] = key
+        with open("gsk.json", "w") as f:
+            json.dump(gsk, f, indent=4)
+        try:
+            sh = gc.open_by_key(get_gsk(client, ctx))
+            sh.get_worksheet(0).update_cell(1, 1, "")
+        except:
+            await ctx.send(f"The Google Sheet Document isn't shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.\nRun again the {prefix}setup command.")
+            return
+        await ctx.send(f"**Google Sheet Key set to:** {key}\n[**3.**]: Type in the Discord User ID of this person who uses the bot to add new games and stuff liked that.")
+        msg = await client.wait_for("message", check=check)
+        with open("developerIDs.json", "r") as f:
+            developerID = json.load(f)
+        developerID[str(ctx.guild.id)] = msg.content
+        with open("developerIDs.json", "w") as f:
+            json.dump(developerID, f, indent=4)
+        try:
+            await ctx.send(f"**Set the developerID to:** {msg.content} -> **User:** {await client.fetch_user(int(msg.content))}\nThe setup was finished successfully.")
+        except:
+            await ctx.send(f"**Set the developerID to:** {msg.content} -> **No valid user!**\nTry to change again the developerID with: **{prefix}setdeveloperID <id>**")
+            return
+    else:
+        try:
+            await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** or **{await client.fetch_user(developerID)}** to set up the bot.")
+        except:
+            await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set up the bot.")
+
+@client.command()
 async def help(ctx, arg1=None):
     with open("prefixes.json", "r") as f:
         prefixes = json.load(f)
@@ -1202,7 +1247,7 @@ async def help(ctx, arg1=None):
         embedVar.add_field(name=f"{prefix}addgame", value=f"Add a new played game. More information with: **{prefix}help addgame**", inline=False)
         embedVar.add_field(name=f"{prefix}player", value=f"Show statistics for players. More information with: **{prefix}help player**", inline=False)
         embedVar.add_field(name=f"{prefix}map", value=f"Show statistics for maps. More information with: **{prefix}help map**", inline=False)
-        embedVar.add_field(name=f"{prefix}rounds", value=f"Show statistics for rounds. More information with: **{prefix}help round**", inline=False)
+        embedVar.add_field(name=f"{prefix}rounds", value=f"Show statistics for rounds. More information with: **{prefix}help rounds**", inline=False)
         embedVar.add_field(name=f"{prefix}agent", value="Show statistics for all agents.", inline=False)
         embedVar.add_field(name=f"{prefix}game <id>", value="Show statistics for the played game with this ID: <id>. The id you can see on the row of the Google Sheet Document. Without the <id> attribute, the last played game get showed.", inline=False)
         embedVar.add_field(name=f"{prefix}rolecomb <map>", value="Show statistics for the combination of agents roles on this <map> Map. For all maps ignore <map>.", inline=False)
