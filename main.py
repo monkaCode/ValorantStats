@@ -68,6 +68,9 @@ async def on_guild_join(guild):
     developerID[str(guild.id)] = "0"
     with open("developerIDs.json", "w") as f:
         json.dump(developerID, f, indent=4)
+    with open("prefixes.json", "r") as f:
+        serverAmmount = len(json.load(f))
+    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=f"Stats on {serverAmmount} servers"))
     
 #bot leave
 @client.event
@@ -87,6 +90,9 @@ async def on_guild_remove(guild):
     developerID.pop(str(guild.id))
     with open("developerIDs.json", "w") as f:
         json.dump(developerID, f, indent=4)
+    with open("prefixes.json", "r") as f:
+        serverAmmount = len(json.load(f))
+    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=f"Stats on {serverAmmount} servers"))
 
 # output if an error occured
 @client.event
@@ -99,7 +105,7 @@ async def on_command_error(ctx, error):
         await ctx.send("Give me a valid argument.")
     else:
         with open("developerIDs.json", "r") as f:
-            developerIDs = json.lod(f)
+            developerIDs = json.load(f)
         developerID = int(developerIDs[str(ctx.guild.id)])
         await ctx.send("Something went wrong, <@" + str(developerID) + ">.") # mentioned the developer in discord if something go wrong
         print(error)
@@ -151,12 +157,17 @@ async def changeprefix(ctx, prefix):
 async def setkey(ctx, id):
     developerID = get_developerID(client, ctx)
     if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
+        keyList = id.split("/")
+        if len(keyList) == 1:
+            key = keyList[0]
+        else:
+            key = keyList[5]
         with open("gsk.json", "r") as f:
             gsk = json.load(f)
-        gsk[str(ctx.guild.id)] = id
+        gsk[str(ctx.guild.id)] = key
         with open("gsk.json", "w") as f:
             json.dump(gsk, f, indent=4)
-        await ctx.send(f"**Google Sheet Key set to:** {id}")
+        await ctx.send(f"**Google Sheet Key set to:** {key}")
     else:
         await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set the Google Sheet Key.")
 
@@ -1163,6 +1174,40 @@ async def voting(ctx):
     for x in  range(len(emoji)):
         await message.add_reaction(emoji[x])
 """
+@client.command()
+async def help(ctx, arg1=None):
+    with open("prefixes.json", "r") as f:
+        prefixes = json.load(f)
+    prefix = prefixes[str(ctx.guild.id)]
+    if arg1 == "addgame":
+        embedVar = discord.Embed(title=f"Help for {prefix}addgame command", description="More information for the addgame command.", color=0xFF0000)
+        embedVar.add_field(name=f"{prefix}addgame <date> <map> <round-wins> <round-losses> <firstSide> <rounds> <player1> <player2> <player3> <player4> <player5>", value=f"Add a new played game.\n<date> -> The date of the game\n<map> -> The map on which the game was played on\n<round-wins> -> The ammount of rounds that your team wins\n<round-losses> -> The ammount of rounds that your team lose\n<firstSide> -> The Side on which your team started. Attacker (A) or Defender (D)\n<rounds> -> W for win and L for lose. Example (13-8): LWWWWWWLWWWLWWLWLLLLW\n<player1-5> -> Stats for players. Format: [name,agent,kills,deaths,assists] Example: [ScreaM,Sage,23,12,8] You can also use the abbreviation of the agents.", inline=False)
+    elif arg1 == "player":
+        embedVar = discord.Embed(title=f"Help for {prefix}player command", description="More information for the player command.", color=0xFF0000)
+        embedVar.add_field(name=f"{prefix}player <sorting>", value="Show statistics for all player. For <sorting> you can use: --wins, --kills, --deaths, --assists, --kd, --kda, --win%. Without sorting it is sorted by played games.", inline=False)
+        embedVar.add_field(name=f"{prefix}player <player> <sorting>", value="Show statistics for <player>. For <sorting> you can use: --wins, --kills, --deaths, --assists, --kd, --kda, --win%. Without sorting it is sorted by played games.", inline=False)
+    elif arg1 == "map":
+        embedVar = discord.Embed(title=f"Help for {prefix}map command", description="More information for the map command.", color=0xFF0000)
+        embedVar.add_field(name=f"{prefix}map <sorting>", value=f"Show statistics for maps. For <sorting> you can use: --wins, --losses, --draws, --win%. Without sorting it is sorted by played games.", inline=False)
+    elif arg1 == "rounds":
+        embedVar = discord.Embed(title=f"Help for {prefix}rounds command", description="More information for the rounds command.", color=0xFF0000)
+    elif arg1 == None:
+        embedVar = discord.Embed(title="Help Command", description="Short description for all commands.", color=0xFF0000)
+        embedVar.add_field(name=f"{prefix}changeprefix <prefix>", value="Changes the Bot Prefix to <prefix>", inline=False)
+        embedVar.add_field(name=f"{prefix}setdeveloperID <id>", value="Set the developerID to the user with this Discord ID: <id> ", inline=False)
+        embedVar.add_field(name=f"{prefix}showdeveloperID", value="Show the developerID and the user with this id.", inline=False)
+        embedVar.add_field(name=f"{prefix}setkey <key>", value="Set the Key from the Google Sheet Document. <key> can be the key or the whole URL.", inline=False)
+        embedVar.add_field(name=f"{prefix}showkey", value="Show the Key from the Google Sheet Document.", inline=False)
+        embedVar.add_field(name=f"{prefix}verify", value="Verify all matches and improves the clarity.", inline=False)
+        embedVar.add_field(name=f"{prefix}addgame", value=f"Add a new played game. More information with: **{prefix}help addgame**", inline=False)
+        embedVar.add_field(name=f"{prefix}player", value=f"Show statistics for players. More information with: **{prefix}help player**", inline=False)
+        embedVar.add_field(name=f"{prefix}map", value=f"Show statistics for maps. More information with: **{prefix}help map**", inline=False)
+        embedVar.add_field(name=f"{prefix}rounds", value=f"Show statistics for rounds. More information with: **{prefix}help round**", inline=False)
+        embedVar.add_field(name=f"{prefix}agent", value="Show statistics for all agents.", inline=False)
+        embedVar.add_field(name=f"{prefix}game <id>", value="Show statistics for the played game with this ID: <id>. The id you can see on the row of the Google Sheet Document. Without the <id> attribute, the last played game get showed.", inline=False)
+        embedVar.add_field(name=f"{prefix}rolecomb <map>", value="Show statistics for the combination of agents roles on this <map> Map. For all maps ignore <map>.", inline=False)
+    await ctx.channel.send(embed=embedVar)
+
 def getCountry(item):
     for x in range(len(agents)):
         if item.upper() == agents[x] or item.capitalize() == agents_full[x]:
