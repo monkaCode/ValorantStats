@@ -1179,7 +1179,7 @@ async def setup(ctx):
     developerID = get_developerID(client, ctx)
     prefix = get_prefix(client, ctx)
     if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
-        await ctx.send("[**1.**]: Make an copy of this Google Sheet Document: https://docs.google.com/spreadsheets/d/1vpNyLf-vzPHh88zD2xacgQFGOTUvunAH3pKrY9RcR6Y/edit?usp=sharing\n[**2.**]: Share this Google Sheet Document to this email address: **monkacode@valorantstats.iam.gserviceaccount.com**\n[**3.**]: Type in the URL of your copy or the key of the Document:")
+        await ctx.send("[**1.**]: Make an copy of this Google Sheet Document: <https://docs.google.com/spreadsheets/d/1vpNyLf-vzPHh88zD2xacgQFGOTUvunAH3pKrY9RcR6Y/edit?usp=sharing>\n[**2.**]: Share this Google Sheet Document to this email address: **monkacode@valorantstats.iam.gserviceaccount.com**\n[**3.**]: Type in the URL of your copy or the key of the Document:")
         channel = ctx.channel
         author = ctx.author.id
         def check(m):
@@ -1199,7 +1199,7 @@ async def setup(ctx):
             sh = gc.open_by_key(get_gsk(client, ctx))
             sh.get_worksheet(0).update_cell(1, 1, "")
         except:
-            await ctx.send(f"The Google Sheet Document isn't shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.\nRun again the {prefix}setup command.")
+            await ctx.send(f"The Google Sheet Document isn't shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.\nRun the **{prefix}setup** command again.")
             return
         await ctx.send(f"**Google Sheet Key set to:** {key}\n[**3.**]: Type in the Discord User ID of this person who uses the bot to add new games and stuff liked that.")
         msg = await client.wait_for("message", check=check)
@@ -1215,7 +1215,10 @@ async def setup(ctx):
             return
     else:
         try:
-            await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** or **{await client.fetch_user(developerID)}** to set up the bot.")
+            if developerID == ctx.guild.owner_id:
+                await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set up the bot.")
+            else:
+                await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** or **{await client.fetch_user(developerID)}** to set up the bot.")
         except:
             await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set up the bot.")
 
