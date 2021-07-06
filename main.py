@@ -117,15 +117,17 @@ async def setdeveloperID(ctx, id):
     if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
         with open("developerIDs.json", "r") as f:
             developerID = json.load(f)
+        try:
+            await client.fetch_user(int(id))
+        except:
+            await ctx.send(f":x: There is no valid user with the ID: **{id}**")
+            return
         developerID[str(ctx.guild.id)] = id
         with open("developerIDs.json", "w") as f:
             json.dump(developerID, f, indent=4)
-        try:
-            await ctx.send(f"**Set the developerID to:** {id} -> **User:** {await client.fetch_user(int(id))}")
-        except:
-            await ctx.send(f"**Set the developerID to:** {id} -> **No valid user!**")
+        await ctx.send(f":white_check_mark: Set the developerID to: **{id}** -> User: **{await client.fetch_user(int(id))}**")
     else:
-        await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to change the developerID.")
+        await ctx.send(f":warning: Ask **{await client.fetch_user(ctx.guild.owner_id)}** to change the developerID.")
 
 #show developerID
 @client.command()
@@ -134,9 +136,9 @@ async def showdeveloperID(ctx):
         developerID = json.load(f)
     id = developerID[str(ctx.guild.id)]
     try:
-        await ctx.send(f"**DeveloperID:** {id} -> **User:** {await client.fetch_user(int(id))}")
+        await ctx.send(f":information_source: DeveloperID: **{id}** -> User: **{await client.fetch_user(int(id))}**")
     except:
-        await ctx.send(f"**DeveloperID:** {id} -> **No valid user!**")
+        await ctx.send(f":information_source: DeveloperID: **{id}** -> Set the developerID with **?setdeveloperID <id>**")
 
 #change prefix
 @client.command()
@@ -148,7 +150,7 @@ async def changeprefix(ctx, prefix):
         prefixes[str(ctx.guild.id)] = prefix
         with open("prefixes.json", "w") as f:
             json.dump(prefixes, f, indent=4)
-        await ctx.send(f"**Prefix changed to:** {prefix}")
+        await ctx.send(f":white_check_mark: Changed prefix to: **{prefix}**")
     else:
         await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to change the bot prefix.")
 
@@ -164,12 +166,27 @@ async def setkey(ctx, id):
             key = keyList[5]
         with open("gsk.json", "r") as f:
             gsk = json.load(f)
+        error = 0
+        try:
+            error = 1
+            sh = gc.open_by_key(key)
+            print(sh)
+            error = 2
+            sh.get_worksheet(0).update_cell(1, 1, "")
+        except:
+            if error == 1:
+                await ctx.send(":x: Can't connect the **Google Sheet Document** to **ValorantStats**.\nIs the Document shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access?")
+            elif error == 2:
+                await ctx.send(f":x: **monkacode@valorantstats.iam.gserviceaccount.com** has no editor access to the Google Sheet Document **{sh.title}**")
+            else:
+                await ctx.send(":x: Can't connect the **Google Sheet Document** to **ValorantStats**.")
+            return
         gsk[str(ctx.guild.id)] = key
         with open("gsk.json", "w") as f:
             json.dump(gsk, f, indent=4)
-        await ctx.send(f"**Google Sheet Key set to:** {key}")
+        await ctx.send(f":white_check_mark: **{sh.title}** x **ValorantStats** connected successfully.")
     else:
-        await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set the Google Sheet Key.")
+        await ctx.send(f":warning: Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set the Google Sheet Key.")
 
 #show gsk
 @client.command()
@@ -179,9 +196,9 @@ async def showkey(ctx):
         with open("gsk.json", "r") as f:
             gsk = json.load(f)
         key = gsk[str(ctx.guild.id)]
-        await ctx.send(f"**Google Sheet Key:** {key}")
+        await ctx.send(f":information_source: Google Sheet Key: **{key}**")
     else:
-        await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to see the Google Sheet Key.")
+        await ctx.send(f":warning: Ask **{await client.fetch_user(ctx.guild.owner_id)}** to see the Google Sheet Key.")
 
 @client.command()
 async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=None, played_rounds=None, p1=None, p2=None, p3=None, p4=None, p5=None):
@@ -1179,7 +1196,7 @@ async def setup(ctx):
     developerID = get_developerID(client, ctx)
     prefix = get_prefix(client, ctx)
     if ctx.author.id == ctx.guild.owner_id or ctx.author.id == developerID:
-        await ctx.send("[**1.**]: Make an copy of this Google Sheet Document: <https://docs.google.com/spreadsheets/d/1vpNyLf-vzPHh88zD2xacgQFGOTUvunAH3pKrY9RcR6Y/edit?usp=sharing>\n[**2.**]: Share this Google Sheet Document to this email address: **monkacode@valorantstats.iam.gserviceaccount.com**\n[**3.**]: Type in the URL of your copy or the key of the Document:")
+        await ctx.send(":one: Make an copy of this Google Sheet Document: <https://docs.google.com/spreadsheets/d/1vpNyLf-vzPHh88zD2xacgQFGOTUvunAH3pKrY9RcR6Y/edit?usp=sharing>\n:two: Share this Google Sheet Document to this email address: **monkacode@valorantstats.iam.gserviceaccount.com**\n:three: Type in the URL of your copy or the key of the Document:")
         channel = ctx.channel
         author = ctx.author.id
         def check(m):
@@ -1197,30 +1214,30 @@ async def setup(ctx):
             json.dump(gsk, f, indent=4)
         try:
             sh = gc.open_by_key(get_gsk(client, ctx))
+            print(sh)
             sh.get_worksheet(0).update_cell(1, 1, "")
         except:
-            await ctx.send(f"The Google Sheet Document isn't shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.\nRun the **{prefix}setup** command again.")
+            await ctx.send(f":x: The Google Sheet Document isn't shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.\nRun the **{prefix}setup** command again.")
             return
-        await ctx.send(f"**Google Sheet Key set to:** {key}\n[**3.**]: Type in the Discord User ID of this person who uses the bot to add new games and stuff liked that.")
+        await ctx.send(f":white_check_mark: **{sh.title}** x **ValorantStats** connected successfully.\n:four: Type in the Discord User ID of this person who uses the bot to add new games and stuff liked that.")
         msg = await client.wait_for("message", check=check)
         with open("developerIDs.json", "r") as f:
             developerID = json.load(f)
+        try:
+            await client.fetch_user(int(msg.content))
+        except:
+            await ctx.send(f":x: **Can't set the developerID to:** {msg.content} -> **No valid user!**\nTry to change again the developerID with: **{prefix}setdeveloperID <id>**")
+            return
         developerID[str(ctx.guild.id)] = msg.content
         with open("developerIDs.json", "w") as f:
             json.dump(developerID, f, indent=4)
-        try:
-            await ctx.send(f"**Set the developerID to:** {msg.content} -> **User:** {await client.fetch_user(int(msg.content))}\nThe setup was finished successfully.")
-        except:
-            await ctx.send(f"**Set the developerID to:** {msg.content} -> **No valid user!**\nTry to change again the developerID with: **{prefix}setdeveloperID <id>**")
-            return
+        await ctx.send(f":white_check_mark: **Set the developerID to:** {msg.content} -> **User:** {await client.fetch_user(int(msg.content))}\n:checkered_flag: **__The setup was finished successfully!__** :checkered_flag:")
     else:
         try:
-            if developerID == ctx.guild.owner_id:
-                await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set up the bot.")
-            else:
-                await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** or **{await client.fetch_user(developerID)}** to set up the bot.")
+            if developerID != ctx.guild.owner_id:
+                await ctx.send(f":warning: Ask **{await client.fetch_user(ctx.guild.owner_id)}** or **{await client.fetch_user(developerID)}** to set up the bot.")
         except:
-            await ctx.send(f"Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set up the bot.")
+            await ctx.send(f":warning: Ask **{await client.fetch_user(ctx.guild.owner_id)}** to set up the bot.")
 
 @client.command()
 async def help(ctx, arg1=None):
