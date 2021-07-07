@@ -1209,16 +1209,16 @@ async def setup(ctx):
             key = keyList[5]
         with open("gsk.json", "r") as f:
             gsk = json.load(f)
-        gsk[str(ctx.guild.id)] = key
-        with open("gsk.json", "w") as f:
-            json.dump(gsk, f, indent=4)
         try:
-            sh = gc.open_by_key(get_gsk(client, ctx))
+            sh = gc.open_by_key(key)
             print(sh)
             sh.get_worksheet(0).update_cell(1, 1, "")
         except:
             await ctx.send(f":x: The Google Sheet Document isn't shared to **monkacode@valorantstats.iam.gserviceaccount.com** with editor access.\nRun the **{prefix}setup** command again.")
             return
+        gsk[str(ctx.guild.id)] = key
+        with open("gsk.json", "w") as f:
+            json.dump(gsk, f, indent=4)
         await ctx.send(f":white_check_mark: **{sh.title}** x **ValorantStats** connected successfully.\n:four: Type in the Discord User ID of this person who uses the bot to add new games and stuff liked that.")
         msg = await client.wait_for("message", check=check)
         with open("developerIDs.json", "r") as f:
