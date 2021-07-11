@@ -262,7 +262,7 @@ async def addgame(ctx, date=None, played_map=None, rw=None, rl=None, firstSide=N
                     error.append("The KDA isn't valid. Use only numbers.")
                 playerFound = False
                 for y in range(len(players)):
-                    if game_player[x][0].lower() == players[y][0].lower() or game_player[x][0].lower() == playerfast[y].lower():
+                    if game_player[x][0].lower() == players[y][0].lower() or game_player[x][0].lower() == playerfast[y][0].lower():
                         player_str.append(players[y][0])
                         game_player[x].append(y)
                         playerFound = True
