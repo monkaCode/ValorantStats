@@ -1,4 +1,4 @@
-# ValorantStats
+# \[OLD] ValorantStats
 A Google Sheets based tracking system, to store much of information from your VALORANT team. You can also host a Discord Bot to have access to this data in Discord or to update your match history.
 
 <p align="center">
